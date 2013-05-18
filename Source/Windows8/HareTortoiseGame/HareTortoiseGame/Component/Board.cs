@@ -20,7 +20,7 @@ namespace HareTortoiseGame.Component
         Chess[] _hare;
         Chess[] _tortoise;
         Turn _nowTurn;
-        Player[] _players = {Player.User, Player.User};
+        Player[] _players = {Player.Computer, Player.User};
 
         #endregion
 
@@ -107,18 +107,29 @@ namespace HareTortoiseGame.Component
                 break;
             }
 
+            List<Tuple<int, Chess.Action>> possibleMove = new List<Tuple<int, Chess.Action>>();
+            for (int i = 0; i < 3; ++i)
+            {
+                possibleMove.AddRange(nowChess[i].GetAllPossibleMove());
+                possibleMove.AddRange(nowChess[i].GetAllGoalMove());
+            }
+            bool turnOther = true;
+            foreach (var possible in possibleMove)
+            {
+                if (!_chessbutton[possible.Item1].HaveChess)
+                {
+                    turnOther = false;
+                    break;
+                }
+            }
+            if (turnOther)
+            {
+                _nowTurn = (Turn)((int)_nowTurn ^ 1);
+                return;
+            }
+
             if (_players[(int)_nowTurn] == Player.User)
             {
-                List<Tuple<int, Chess.Action>> posibleMove = new List<Tuple<int, Chess.Action>>();
-                for (int i = 0; i < 3; ++i )
-                {
-                    posibleMove.AddRange(nowChess[i].GetAllPossibleMove());
-                    posibleMove.AddRange(nowChess[i].GetAllGoalMove());
-                }
-                if (posibleMove.Count <= 0)
-                {
-                    _nowTurn = (Turn)((int)_nowTurn ^ 1);
-                }
                 if (TouchControl.IsMouseClick() || TouchControl.IsTouchClick())
                 {
                     for (int i = 0; i < GoalChessButton; ++i)
@@ -229,7 +240,18 @@ namespace HareTortoiseGame.Component
             }
             else
             {
-                Tuple<int, Action> move;
+                ComputerAI.setComputerAI( new BoardData(_tortoise, _hare), 3, _nowTurn);
+                Tuple<int, Chess.Action> move = ComputerAI.BestMove();
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (nowChess[i].X == move.Item1 % 4 && nowChess[i].Y == move.Item1 / 4)
+                    {
+                        _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = false;
+                        nowChess[i].Move(move.Item2);
+                        if(!nowChess[i].Finish) _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = true;
+                    }
+                }
+                _nowTurn = (Turn)((int)(_nowTurn) ^ 1);
             }
 
             base.Update(gameTime);

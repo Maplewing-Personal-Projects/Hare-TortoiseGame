@@ -27,7 +27,14 @@ namespace HareTortoiseGame.Manager
         #region Property
         
         public DrawState CurrentState { get; set; }
-        
+        public DrawState LastState { 
+            get {
+                if (_stateQueue.Count <= 0) return _goalState;
+                DrawState[] array = _stateQueue.ToArray(); 
+                return array[array.Length - 1]; 
+            } 
+        }
+
         #endregion
 
         #region Methods
@@ -37,6 +44,7 @@ namespace HareTortoiseGame.Manager
             _stateChangeSecondQueue = new Queue<float>();
             _stateQueue = new Queue<DrawState>();
             CurrentState = state;
+            _goalState = state;
             _currentColorAvoidSmallNumber = CurrentState.Color.ToVector4();
         }
 

@@ -137,6 +137,7 @@
     <Compile Include="Component\Container.cs" />
     <Compile Include="Component\GraphComponent.cs" />
     <Compile Include="GameLogic\BoardData.cs" />
+    <Compile Include="GameLogic\ComputerAI.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>

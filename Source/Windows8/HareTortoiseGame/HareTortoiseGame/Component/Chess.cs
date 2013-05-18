@@ -12,7 +12,7 @@ namespace HareTortoiseGame.Component
     public class Chess : GraphComponent
     {
         public enum Type { Tortoise, Hare };
-        public enum Action { Left, Right, Up, Down };
+        public enum Action { Left, Right, Up, Down, None };
 
         #region Field
         #endregion
@@ -47,26 +47,26 @@ namespace HareTortoiseGame.Component
             {
                 case Action.Left:
                     X -= 1;
-                    AddState( 1.0f, new DrawState(Game, 
-                        new Vector4( _state.CurrentState.Bounds.X - 0.25f, _state.CurrentState.Bounds.Y,
-                            _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                    AddState( 1.0f, new DrawState(Game,
+                        new Vector4(_state.LastState.Bounds.X - 0.25f, _state.LastState.Bounds.Y,
+                            _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                 break;
                 case Action.Right:
                     X += 1;
                     if (X <= 3)
                     {
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X + 0.25f, _state.CurrentState.Bounds.Y,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X + 0.25f, _state.LastState.Bounds.Y,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                     }
                     else
                     {
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X + 0.25f, _state.CurrentState.Bounds.Y,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X + 0.25f, _state.LastState.Bounds.Y,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X + 1f, _state.CurrentState.Bounds.Y,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X + 1f, _state.LastState.Bounds.Y,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         Finish = true;
                     }
                 break;
@@ -75,25 +75,25 @@ namespace HareTortoiseGame.Component
                     if (Y >= 0)
                     {
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X, _state.CurrentState.Bounds.Y - 0.25f,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 0.25f,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                     }
                     else
                     {
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X, _state.CurrentState.Bounds.Y - 0.25f,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 0.25f,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         AddState(1.0f, new DrawState(Game,
-                            new Vector4(_state.CurrentState.Bounds.X, _state.CurrentState.Bounds.Y - 1f,
-                                _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                            new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 1f,
+                                _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         Finish = true;
                     }
                 break;
                 case Action.Down:
                     Y += 1;
                     AddState( 1.0f, new DrawState( Game,
-                        new Vector4(_state.CurrentState.Bounds.X, _state.CurrentState.Bounds.Y + 0.25f,
-                            _state.CurrentState.Bounds.Z, _state.CurrentState.Bounds.W), Color.White));
+                        new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y + 0.25f,
+                            _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                 
                 break;
             }

@@ -6,6 +6,9 @@ namespace HareTortoiseGame.GameLogic
     public class BoardData
     {
 
+        public static int[] Row = { 0x000F, 0x00F0, 0x0F00, 0xF000 };
+        public static int[] Column = { 0x1111, 0x2222, 0x4444, 0x8888 };
+
         #region Properties
 
         public int Hare { set; get; }
@@ -26,14 +29,29 @@ namespace HareTortoiseGame.GameLogic
             Tortoise = 0;
             for (int i = 0; i < 3; ++i)
             {
-                Tortoise |= 1 << (tortoise[i].Y * 4 + tortoise[i].X);
+                if( !tortoise[i].Finish ) Tortoise |= 1 << (tortoise[i].Y * 4 + tortoise[i].X);
             }
 
             Hare = 0;
             for (int i = 0; i < 3; ++i)
             {
-                Hare |= 1 << (hare[i].Y * 4 + hare[i].X);
+                if( !hare[i].Finish ) Hare |= 1 << (hare[i].Y * 4 + hare[i].X);
             }
+        }
+
+        public bool TerminalTest()
+        {
+            return (Tortoise == 0 || Hare == 0);
+        }
+
+        public int HaveChess()
+        {
+            return Hare | Tortoise;
+        }
+
+        public int Empty()
+        {
+            return ~HaveChess();
         }
 
         static public int GetOneChessPosition(int board)
@@ -47,6 +65,7 @@ namespace HareTortoiseGame.GameLogic
             }
             return position;
         }
+
 
         #endregion
     }
