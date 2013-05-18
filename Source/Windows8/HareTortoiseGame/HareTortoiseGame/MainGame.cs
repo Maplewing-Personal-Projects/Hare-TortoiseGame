@@ -63,6 +63,7 @@ namespace HareTortoiseGame
         {
             // TODO: Add your update logic here
             _sceneManager.PreviousBounds = _graphics.GraphicsDevice.Viewport;
+            TouchControl.Update(gameTime);
             base.Update(gameTime);
         }
 

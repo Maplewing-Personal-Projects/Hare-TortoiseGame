@@ -89,6 +89,13 @@ namespace HareTortoiseGame.Manager
             _stateQueue.Enqueue(state);
         }
 
+        public void ClearAllAndAddState(float second, DrawState state)
+        {
+            _stateChangeSecondQueue.Clear();
+            _stateQueue.Clear();
+            SetNextState(second, state);
+        }
+
         #endregion
 
 

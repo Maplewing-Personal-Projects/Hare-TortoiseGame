@@ -10,6 +10,7 @@ namespace HareTortoiseGame.PackageScene
         #region Field
 
         Board _board;
+        Container _panel;
 
         #endregion
         
@@ -21,13 +22,20 @@ namespace HareTortoiseGame.PackageScene
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
             _board = new Board(game, game.Content.Load<Texture2D>("blank"),
-                new DrawState(game, new Vector4(0.35f, 0.1f, 0.6f, 0.8f), Color.Gray));
+                new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
+            _board.AddState(0.5f, new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
+            _board.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.1f, 0.6f, 0.8f), Color.Gray));
+            _panel = new Container(game, game.Content.Load<Texture2D>("blank"),
+                new DrawState(game, new Vector4(0f, 0f, 0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
+            _panel.AddState(0.5f, new DrawState(game, new Vector4(0f, 0f, 0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
+            _panel.AddState(0.5f, new DrawState(game, new Vector4(0f, 0f, 0.3f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
             AddComponent(_board);
+            AddComponent(_panel);
         }
 
         public override void Initialize()
         {
-            _state.AddState(2.0f, new DrawState(Game, new Vector4(0, 0, 1, 1), Color.Gray));
+            _state.AddState(0.5f, new DrawState(Game, new Vector4(0, 0, 1, 1), Color.Gray));
             base.Initialize();
         }
 

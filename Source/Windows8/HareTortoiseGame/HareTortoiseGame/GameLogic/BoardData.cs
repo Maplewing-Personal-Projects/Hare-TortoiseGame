@@ -21,6 +21,21 @@ namespace HareTortoiseGame.GameLogic
             Tortoise = tortoise;
         }
 
+        public BoardData(Chess[] tortoise, Chess[] hare)
+        {
+            Tortoise = 0;
+            for (int i = 0; i < 3; ++i)
+            {
+                Tortoise |= 1 << (tortoise[i].Y * 4 + tortoise[i].X);
+            }
+
+            Hare = 0;
+            for (int i = 0; i < 3; ++i)
+            {
+                Hare |= 1 << (hare[i].Y * 4 + hare[i].X);
+            }
+        }
+
         static public int GetOneChessPosition(int board)
         {
             int position = 0;

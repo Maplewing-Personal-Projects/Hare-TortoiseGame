@@ -16,6 +16,12 @@ namespace HareTortoiseGame.Component
 
         #endregion
 
+        #region Property
+
+        public StateManager State { get { return _state;  } }
+
+        #endregion
+
         #region Constructor
 
         public GraphComponent(Game game, Texture2D picture, DrawState state)
@@ -24,6 +30,14 @@ namespace HareTortoiseGame.Component
             _picture = picture;
             _state = new StateManager(game, state);
             PreviousBounds = game.GraphicsDevice.Viewport;
+        }
+
+        public Rectangle Bounds()
+        {
+            return new Rectangle((int)(PreviousBounds.X + PreviousBounds.Width * _state.CurrentState.Bounds.X),
+                        (int)(PreviousBounds.Y + PreviousBounds.Height * _state.CurrentState.Bounds.Y),
+                        (int)(PreviousBounds.Width * _state.CurrentState.Bounds.Z),
+                        (int)(PreviousBounds.Height * _state.CurrentState.Bounds.W));
         }
 
         protected override void LoadContent()
@@ -35,19 +49,31 @@ namespace HareTortoiseGame.Component
         public override void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin();
-            _spriteBatch.Draw(_picture, new Rectangle((int)(PreviousBounds.X + PreviousBounds.Width * _state.CurrentState.Bounds.X),
-                    (int)(PreviousBounds.Y + PreviousBounds.Height * _state.CurrentState.Bounds.Y),
-                    (int)(PreviousBounds.Width * _state.CurrentState.Bounds.Z),
-                    (int)(PreviousBounds.Height * _state.CurrentState.Bounds.W)), _state.CurrentState.SourcePosition,
+            _spriteBatch.Draw(_picture, Bounds(), _state.CurrentState.SourcePosition,
                     _state.CurrentState.Color, _state.CurrentState.RotateAngle,
                     Vector2.Zero, _state.CurrentState.SpriteEffects, _state.CurrentState.Depth);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
 
+        public bool IsHit()
+        {
+            if ((TouchControl.IsMouseClick() && Bounds().Contains(TouchControl.MousePosition()))
+                || (TouchControl.IsTouchClick() && Bounds().Contains(TouchControl.TouchPosition())))
+            {
+                return true;
+            }
+            else return false;
+        }
+
         public void AddState(float second, DrawState drawState)
         {
             _state.AddState(second, drawState);
+        }
+
+        public void ClearAllAndAddState(float second, DrawState drawState)
+        {
+            _state.ClearAllAndAddState(second, drawState);
         }
 
         public override void Start()
