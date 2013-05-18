@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="Component\BasicComponent.cs" />
     <Compile Include="Component\Board.cs" />
+    <Compile Include="Component\Chess.cs" />
     <Compile Include="Component\ChessButton.cs" />
     <Compile Include="Component\Container.cs" />
     <Compile Include="Component\GraphComponent.cs" />
@@ -153,6 +154,8 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Content\blank.xnb" />
+    <Content Include="Content\Rabbit.png" />
+    <Content Include="Content\Turtle.png" />
     <None Include="HareTortoiseGame_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

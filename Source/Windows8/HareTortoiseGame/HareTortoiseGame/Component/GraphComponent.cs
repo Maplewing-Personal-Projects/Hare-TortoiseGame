@@ -45,6 +45,11 @@ namespace HareTortoiseGame.Component
             base.Draw(gameTime);
         }
 
+        public void AddState(float second, DrawState drawState)
+        {
+            _state.AddState(second, drawState);
+        }
+
         public override void Start()
         {
             _state.Start();

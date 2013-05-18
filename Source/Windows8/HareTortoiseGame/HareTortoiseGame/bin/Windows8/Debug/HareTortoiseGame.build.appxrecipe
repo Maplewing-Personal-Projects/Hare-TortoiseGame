@@ -67,6 +67,12 @@
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Content\blank.xnb">
       <PackagePath>Content\blank.xnb</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Content\Rabbit.png">
+      <PackagePath>Content\Rabbit.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Content\Turtle.png">
+      <PackagePath>Content\Turtle.png</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Assets\Logo.png">
       <PackagePath>Assets\Logo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>

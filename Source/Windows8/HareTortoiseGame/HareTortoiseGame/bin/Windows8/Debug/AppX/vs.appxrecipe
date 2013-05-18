@@ -16,17 +16,17 @@
     <AppXManifest Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2013-05-18T03:09:56.877</Modified>
+      <Modified>2013-05-18T04:14:09.050</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\HareTortoiseGame.exe">
       <PackagePath>HareTortoiseGame.exe</PackagePath>
-      <Modified>2013-05-18T03:09:56.776</Modified>
+      <Modified>2013-05-18T05:45:26.792</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\HareTortoiseGame.pdb">
       <PackagePath>HareTortoiseGame.pdb</PackagePath>
-      <Modified>2013-05-18T03:09:56.746</Modified>
+      <Modified>2013-05-18T05:45:26.762</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\MSBuild\..\MonoGame\v3.0\Assemblies\Windows8\MonoGame.Framework.dll">
       <PackagePath>MonoGame.Framework.dll</PackagePath>
@@ -92,6 +92,14 @@
       <PackagePath>Content\blank.xnb</PackagePath>
       <Modified>2013-05-18T02:23:52.686</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Content\Rabbit.png">
+      <PackagePath>Content\Rabbit.png</PackagePath>
+      <Modified>2013-05-18T04:13:27.109</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Content\Turtle.png">
+      <PackagePath>Content\Turtle.png</PackagePath>
+      <Modified>2013-05-18T04:13:27.120</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\Assets\Logo.png">
       <PackagePath>Assets\Logo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
@@ -126,7 +134,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2013-05-18T02:27:38.494</Modified>
+      <Modified>2013-05-18T04:14:08.970</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

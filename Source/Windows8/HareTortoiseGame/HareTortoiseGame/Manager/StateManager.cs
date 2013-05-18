@@ -19,8 +19,9 @@ namespace HareTortoiseGame.Manager
         private int _addframe;
         private Vector2 _addPosition;
         private Vector2 _addSize;
-        private Vector3 _addColor;
+        private Vector4 _addColor;
 
+        private Vector4 _currentColorAvoidSmallNumber;
         #endregion
         
         #region Property
@@ -36,6 +37,7 @@ namespace HareTortoiseGame.Manager
             _stateChangeSecondQueue = new Queue<float>();
             _stateQueue = new Queue<DrawState>();
             CurrentState = state;
+            _currentColorAvoidSmallNumber = CurrentState.Color.ToVector4();
         }
 
         public override void Update(GameTime gameTime) 
@@ -46,10 +48,13 @@ namespace HareTortoiseGame.Manager
                     CurrentState.Position.Y + _addPosition.Y,
                     CurrentState.Size.X + _addSize.X,
                     CurrentState.Size.Y + _addSize.Y );
-                
-                Vector3 color = CurrentState.Color.ToVector3();
-                CurrentState.Color = new Color(color.X + _addColor.X,
-                    color.Y + _addColor.Y, color.Z + _addColor.Z);
+
+                _currentColorAvoidSmallNumber = new Vector4(
+                    _currentColorAvoidSmallNumber.X + _addColor.X,
+                    _currentColorAvoidSmallNumber.Y + _addColor.Y,
+                    _currentColorAvoidSmallNumber.Z + _addColor.Z,
+                    _currentColorAvoidSmallNumber.W + _addColor.W);
+                CurrentState.Color = new Color(_currentColorAvoidSmallNumber);
 
                 --_addframe;
                 if (_addframe <= 0) CurrentState = _goalState;
@@ -69,10 +74,11 @@ namespace HareTortoiseGame.Manager
                 ((state.Position.Y - CurrentState.Position.Y) / second / FPS));
             _addSize = new Vector2(((state.Size.X - CurrentState.Size.X) / second / FPS),
                 ((state.Size.Y - CurrentState.Size.Y) / second / FPS));
-            Vector3 color = state.Color.ToVector3(), currentColor = CurrentState.Color.ToVector3();
-            _addColor = new Vector3(((color.X - currentColor.X) / second / FPS),
+            Vector4 color = state.Color.ToVector4(), currentColor = CurrentState.Color.ToVector4();
+            _addColor = new Vector4(((color.X - currentColor.X) / second / FPS),
                 ((color.Y - currentColor.Y) / second / FPS),
-                ((color.Z - currentColor.Z) / second / FPS));
+                ((color.Z - currentColor.Z) / second / FPS),
+                ((color.W - currentColor.W) / second / FPS));
             _addframe = (int)(second * (float)FPS) + 1;
             _goalState = state;
         }

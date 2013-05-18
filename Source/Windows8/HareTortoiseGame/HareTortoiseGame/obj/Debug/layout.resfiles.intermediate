@@ -6,3 +6,5 @@ App.xaml
 Common\StandardStyles.xaml
 GamePage.xaml
 Content\blank.xnb
+Content\Rabbit.png
+Content\Turtle.png
