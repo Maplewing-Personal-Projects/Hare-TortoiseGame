@@ -6,11 +6,11 @@ using HareTortoiseGame.State;
 
 namespace HareTortoiseGame.Component
 {
-    public class GraphComponent : BasicComponent
+    public class FontComponent : BasicComponent
     {
         #region Field
 
-        protected Texture2D _picture;
+        protected SpriteFont _font;
         protected StateManager _state;
         protected SpriteBatch _spriteBatch;
 
@@ -18,18 +18,20 @@ namespace HareTortoiseGame.Component
 
         #region Property
 
-        public StateManager State { get { return _state;  } }
+        public StateManager State { get { return _state; } }
+        public string Content { get; set; }
 
         #endregion
 
         #region Constructor
 
-        public GraphComponent(Game game, Texture2D picture, DrawState state)
+        public FontComponent(Game game, SpriteFont font, DrawState state)
             : base(game)
         {
-            _picture = picture;
+            _font = font;
             _state = new StateManager(game, state);
             PreviousBounds = game.GraphicsDevice.Viewport;
+            Content = "";
         }
 
         #endregion
@@ -57,10 +59,12 @@ namespace HareTortoiseGame.Component
 
         public override void Draw(GameTime gameTime)
         {
+            Rectangle bounds = Bounds();
             _spriteBatch.Begin();
-            _spriteBatch.Draw(_picture, Bounds(), _state.CurrentState.SourcePosition,
-                    _state.CurrentState.Color, _state.CurrentState.RotateAngle,
-                    Vector2.Zero, _state.CurrentState.SpriteEffects, _state.CurrentState.Depth);
+            _spriteBatch.DrawString(_font, Content, new Vector2(bounds.X, bounds.Y),
+                _state.CurrentState.Color, _state.CurrentState.RotateAngle, Vector2.Zero,
+                bounds.Width/_font.MeasureString(Content).X , _state.CurrentState.SpriteEffects,
+                _state.CurrentState.Depth);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

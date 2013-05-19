@@ -10,6 +10,7 @@ namespace HareTortoiseGame.Manager
         #region Field
 
         private Scene CurrentScene;
+        private Scene _previousScene;
 
         #endregion
 
@@ -35,6 +36,9 @@ namespace HareTortoiseGame.Manager
                 case "Board":
                     scene = new GameBoardScene(Game);
                     break;
+                case "Setting":
+                    scene = new SettingScene(Game);
+                    break;
                 default:
                     break;
             }
@@ -52,11 +56,23 @@ namespace HareTortoiseGame.Manager
         {
             if (CurrentScene.NextScene != null)
             {
+                _previousScene = CurrentScene;
+                _previousScene.ClearAllAndAddState( 0.2f, 
+                    new State.DrawState(Game, new Vector4(2f, 0f, 1f, 1f), Color.White));
                 Scene scene = MakeScene(CurrentScene.NextScene);
                 scene.Start();
-                CurrentScene.End();
                 CurrentScene = scene;
             }
+
+            if (_previousScene != null)
+            {
+                if (_previousScene.IsFinish())
+                {
+                    _previousScene.End();
+                    _previousScene = null;
+                }
+            }
+
 
             CurrentScene.PreviousBounds = PreviousBounds;
             base.Update(gameTime);

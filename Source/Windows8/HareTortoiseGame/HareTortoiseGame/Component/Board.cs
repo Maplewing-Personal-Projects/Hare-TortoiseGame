@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,6 +12,7 @@ namespace HareTortoiseGame.Component
     public class Board : Container
     {
         #region Enum
+        public enum BoardState { WaitIO, Animation, Computer };
         public enum Turn { TortoiseTurn = 0, HareTurn = 1 };
         public enum Player { User, Computer };
         #endregion
@@ -22,9 +24,15 @@ namespace HareTortoiseGame.Component
         ChessButton[] _goalbutton;
         Chess[] _hare;
         Chess[] _tortoise;
-        Turn _nowTurn;
-        Player[] _players = {Player.User, Player.Computer};
+        Player[] _players;
+        
+        Task<Tuple<int, Chess.Action>> _computerAITask; 
+        #endregion
 
+        #region Property
+        public BoardState NowState { get; private set; }
+        public Turn NowTurn { get; private set; }
+        public Boolean NoMove { get; private set; }
         #endregion
 
         #region Constructor
@@ -34,7 +42,8 @@ namespace HareTortoiseGame.Component
         {
             if (players != null) _players = players;
             if (boardData == null) boardData = new BoardData();
-            _nowTurn = Turn.TortoiseTurn;
+            NowState = BoardState.WaitIO;
+            NowTurn = Turn.TortoiseTurn;
             _chessbutton = new ChessButton[TotalChessButton];
             for (int i = 0; i < TotalChessButton; ++i)
             {
@@ -91,6 +100,8 @@ namespace HareTortoiseGame.Component
                 ++index;
             }
 
+            _players = Setting.Players;
+            _computerAITask = null;
         }
 
         #endregion
@@ -99,17 +110,192 @@ namespace HareTortoiseGame.Component
 
         public override void Update(GameTime gameTime)
         {
-            Chess[] nowChess = null;
-            switch (_nowTurn)
+            if (!(TortoiseVictory() || HareVictory()))
             {
-                case Turn.TortoiseTurn:
-                    nowChess = _tortoise;
-                break;
-                case Turn.HareTurn:
-                    nowChess = _hare;
-                break;
-            }
+                Chess[] nowChess = null;
+                switch (NowTurn)
+                {
+                    case Turn.TortoiseTurn:
+                        nowChess = _tortoise;
+                        break;
+                    case Turn.HareTurn:
+                        nowChess = _hare;
+                        break;
+                }
 
+                if (_players[(int)NowTurn] == Player.Computer && NowState == BoardState.WaitIO)
+                    NowState = BoardState.Computer;
+
+                if (NowState == BoardState.WaitIO)
+                {
+                    if (TouchControl.IsMouseClick() || TouchControl.IsTouchClick())
+                    {
+                        for (int i = 0; i < GoalChessButton; ++i)
+                        {
+                            if (_goalbutton[i].IsHit() && _goalbutton[i].WantToGo != -1)
+                            {
+                                for (int j = 0; j < GoalChessButton; ++j)
+                                {
+                                    _goalbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    if (j != i) _goalbutton[j].WantToGo = -1;
+                                }
+                                for (int j = 0; j < TotalChessButton; ++j)
+                                {
+                                    _chessbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    _chessbutton[j].WantToGo = -1;
+                                }
+                                Chess chess = nowChess[_goalbutton[i].WantToGo];
+                                _goalbutton[i].WantToGo = -1;
+                                _chessbutton[chess.Y * 4 + chess.X].HaveChess = false;
+                                chess.Move(_goalbutton[i].WantToGoAction);
+                                NowTurn = (Turn)((int)NowTurn ^ 1);
+                                NowState = BoardState.Animation;
+                                NoMove = false;
+                            }
+                        }
+                        for (int i = 0; i < TotalChessButton; ++i)
+                        {
+                            if (_chessbutton[i].WantToGo != -1 && _chessbutton[i].IsHit())
+                            {
+                                for (int j = 0; j < GoalChessButton; ++j)
+                                {
+                                    _goalbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    _goalbutton[j].WantToGo = -1;
+                                }
+                                for (int j = 0; j < TotalChessButton; ++j)
+                                {
+                                    _chessbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    if (j != i) _chessbutton[j].WantToGo = -1;
+                                }
+                                Chess chess = nowChess[_chessbutton[i].WantToGo];
+                                _chessbutton[i].WantToGo = -1;
+                                _chessbutton[chess.Y * 4 + chess.X].HaveChess = false;
+                                _chessbutton[i].HaveChess = true;
+                                chess.Move(_chessbutton[i].WantToGoAction);
+                                NowTurn = (Turn)((int)NowTurn ^ 1);
+                                NowState = BoardState.Animation;
+                                NoMove = false;
+                            }
+                        }
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (nowChess[i].IsHit() && !nowChess[i].Finish)
+                            {
+                                for (int j = 0; j < GoalChessButton; ++j)
+                                {
+                                    _goalbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    _goalbutton[j].WantToGo = -1;
+                                }
+                                for (int j = 0; j < TotalChessButton; ++j)
+                                {
+                                    _chessbutton[j].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
+                                            new Color(0.0f, 0.0f, 0.0f, 0.5f)));
+                                    _chessbutton[j].WantToGo = -1;
+                                }
+                                _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].ClearAllAndAddState(0.5f,
+                                    new DrawState(Game, _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].State.CurrentState.Bounds,
+                                        Color.PowderBlue));
+
+                                List<Tuple<int, Chess.Action>> position = nowChess[i].GetAllPossibleMove();
+                                foreach (Tuple<int, Chess.Action> possiblePosition in position)
+                                {
+                                    if (_chessbutton[possiblePosition.Item1].HaveChess)
+                                    {
+                                        _chessbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _chessbutton[possiblePosition.Item1].State.CurrentState.Bounds,
+                                            Color.DarkRed));
+                                    }
+                                    else
+                                    {
+                                        _chessbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _chessbutton[possiblePosition.Item1].State.CurrentState.Bounds,
+                                            Color.DarkSeaGreen));
+                                        _chessbutton[possiblePosition.Item1].WantToGo = i;
+                                        _chessbutton[possiblePosition.Item1].WantToGoAction = possiblePosition.Item2;
+                                    }
+                                }
+
+                                position = nowChess[i].GetAllGoalMove();
+                                foreach (Tuple<int, Chess.Action> possiblePosition in position)
+                                {
+                                    _goalbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
+                                            new DrawState(Game, _goalbutton[possiblePosition.Item1].State.CurrentState.Bounds,
+                                            Color.DarkSeaGreen));
+                                    _goalbutton[possiblePosition.Item1].WantToGo = i;
+                                    _goalbutton[possiblePosition.Item1].WantToGoAction = possiblePosition.Item2;
+                                }
+
+                            }
+                        }
+                    }
+                }
+                else if (NowState == BoardState.Animation)
+                {
+                    CheckPass(nowChess);
+
+                    bool isFinish = true;
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        isFinish &= _tortoise[i].IsFinish() && _hare[i].IsFinish();
+                    }
+                    if (isFinish)
+                    {
+                        if (_players[(int)NowTurn] == Player.Computer) NowState = BoardState.Computer;
+                        else NowState = BoardState.WaitIO;
+                    }
+                    if (_computerAITask == null && _players[(int)NowTurn] == Player.Computer)
+                    {
+                        ComputerAI.setComputerAI(new BoardData(_tortoise, _hare), 12, NowTurn);
+                        _computerAITask = new Task<Tuple<int, Chess.Action>>(ComputerAI.BestMove);
+                        _computerAITask.Start();
+                    }
+                }
+                else
+                {
+                    if (_computerAITask == null)
+                    {
+                        ComputerAI.setComputerAI(new BoardData(_tortoise, _hare), Setting.MaxPly, NowTurn);
+                        _computerAITask = new Task<Tuple<int, Chess.Action>>(ComputerAI.BestMove);
+                        _computerAITask.Start();
+                    }
+                    else
+                    {
+                        if (_computerAITask.IsCompleted)
+                        {
+                            Tuple<int, Chess.Action> move = _computerAITask.Result;
+                            for (int i = 0; i < 3; ++i)
+                            {
+                                if (nowChess[i].X == move.Item1 % 4 && nowChess[i].Y == move.Item1 / 4)
+                                {
+                                    _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = false;
+                                    nowChess[i].Move(move.Item2);
+                                    if (!nowChess[i].Finish) _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = true;
+                                }
+                            }
+                            NowTurn = (Turn)((int)(NowTurn) ^ 1);
+                            if (_players[(int)NowTurn] == Player.Computer) NowState = BoardState.Animation;
+                            else NowState = BoardState.WaitIO;
+                            _computerAITask = null;
+                        }
+                    }
+                }
+            }
+            base.Update(gameTime);
+        }
+
+        private void CheckPass(Chess[] nowChess)
+        {
             List<Tuple<int, Chess.Action>> possibleMove = new List<Tuple<int, Chess.Action>>();
             bool turnOther = true;
             for (int i = 0; i < 3; ++i)
@@ -134,137 +320,19 @@ namespace HareTortoiseGame.Component
             }
             if (turnOther)
             {
-                _nowTurn = (Turn)((int)_nowTurn ^ 1);
-                return;
+                NowTurn = (Turn)((int)NowTurn ^ 1);
+                NoMove = true;
             }
+        }
 
-            if (_players[(int)_nowTurn] == Player.User)
-            {
-                if (TouchControl.IsMouseClick() || TouchControl.IsTouchClick())
-                {
-                    for (int i = 0; i < GoalChessButton; ++i)
-                    {
-                        if (_goalbutton[i].IsHit() && _goalbutton[i].WantToGo != -1)
-                        {
-                            for (int j = 0; j < GoalChessButton; ++j)
-                            {
-                                _goalbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                if (j != i) _goalbutton[j].WantToGo = -1;
-                            }
-                            for (int j = 0; j < TotalChessButton; ++j)
-                            {
-                                _chessbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                _chessbutton[j].WantToGo = -1;
-                            }
-                            Chess chess = nowChess[_goalbutton[i].WantToGo];
-                            _goalbutton[i].WantToGo = -1;
-                            _chessbutton[chess.Y * 4 + chess.X].HaveChess = false;
-                            chess.Move(_goalbutton[i].WantToGoAction);
-                            _nowTurn = (Turn)((int)_nowTurn ^ 1);
-                        }
-                    }
-                    for (int i = 0; i < TotalChessButton; ++i)
-                    {
-                        if (_chessbutton[i].WantToGo != -1 && _chessbutton[i].IsHit() )
-                        {
-                            for (int j = 0; j < GoalChessButton; ++j)
-                            {
-                                _goalbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                _goalbutton[j].WantToGo = -1;
-                            }
-                            for (int j = 0; j < TotalChessButton; ++j)
-                            {
-                                _chessbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                if (j != i) _chessbutton[j].WantToGo = -1;
-                            }
-                            Chess chess = nowChess[_chessbutton[i].WantToGo];
-                            _chessbutton[i].WantToGo = -1;
-                            _chessbutton[chess.Y * 4 + chess.X].HaveChess = false;
-                            _chessbutton[i].HaveChess = true;
-                            chess.Move(_chessbutton[i].WantToGoAction);
-                            _nowTurn = (Turn)((int)_nowTurn ^ 1);
-                        }
-                    }
-                    for (int i = 0; i < 3; i++)
-                    {
-                        if (nowChess[i].IsHit() && !nowChess[i].Finish)
-                        {
-                            for (int j = 0; j < GoalChessButton; ++j)
-                            {
-                                _goalbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _goalbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                _goalbutton[j].WantToGo = -1;
-                            }
-                            for (int j = 0; j < TotalChessButton; ++j)
-                            {
-                                _chessbutton[j].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _chessbutton[j].State.CurrentState.Bounds,
-                                        new Color(0.0f, 0.0f, 0.0f, 0.5f)));
-                                _chessbutton[j].WantToGo = -1;
-                            }
-                            _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].ClearAllAndAddState(0.5f,
-                                new DrawState( Game, _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].State.CurrentState.Bounds,
-                                    Color.PowderBlue ));
+        public bool TortoiseVictory()
+        {
+            return _tortoise[0].Finish && _tortoise[1].Finish && _tortoise[2].Finish;
+        }
 
-                            List<Tuple<int,Chess.Action>> position = nowChess[i].GetAllPossibleMove();
-                            foreach (Tuple<int,Chess.Action> possiblePosition in position)
-                            {
-                                if (_chessbutton[possiblePosition.Item1].HaveChess)
-                                {
-                                    _chessbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _chessbutton[possiblePosition.Item1].State.CurrentState.Bounds,
-                                        Color.DarkRed));
-                                }
-                                else
-                                {
-                                    _chessbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _chessbutton[possiblePosition.Item1].State.CurrentState.Bounds,
-                                        Color.DarkSeaGreen));
-                                    _chessbutton[possiblePosition.Item1].WantToGo = i;
-                                    _chessbutton[possiblePosition.Item1].WantToGoAction = possiblePosition.Item2;
-                                }
-                            }
-
-                            position = nowChess[i].GetAllGoalMove();
-                            foreach (Tuple<int, Chess.Action> possiblePosition in position)
-                            {
-                                _goalbutton[possiblePosition.Item1].ClearAllAndAddState(0.5f,
-                                        new DrawState(Game, _goalbutton[possiblePosition.Item1].State.CurrentState.Bounds,
-                                        Color.DarkSeaGreen));
-                                _goalbutton[possiblePosition.Item1].WantToGo = i;
-                                _goalbutton[possiblePosition.Item1].WantToGoAction = possiblePosition.Item2;
-                            }
-
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ComputerAI.setComputerAI( new BoardData(_tortoise, _hare), 12, _nowTurn);
-                Tuple<int, Chess.Action> move = ComputerAI.BestMove();
-                for (int i = 0; i < 3; ++i)
-                {
-                    if (nowChess[i].X == move.Item1 % 4 && nowChess[i].Y == move.Item1 / 4)
-                    {
-                        _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = false;
-                        nowChess[i].Move(move.Item2);
-                        if(!nowChess[i].Finish) _chessbutton[nowChess[i].Y * 4 + nowChess[i].X].HaveChess = true;
-                    }
-                }
-                _nowTurn = (Turn)((int)(_nowTurn) ^ 1);
-            }
-
-            base.Update(gameTime);
+        public bool HareVictory()
+        {
+            return _hare[0].Finish && _hare[1].Finish && _hare[2].Finish;
         }
         #endregion
     }

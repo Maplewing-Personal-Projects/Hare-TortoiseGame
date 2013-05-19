@@ -28,7 +28,7 @@ namespace HareTortoiseGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _sceneManager = new SceneManager(this, "Board");
+            _sceneManager = new SceneManager(this, "Setting");
             _sceneManager.Start();
             base.Initialize();
         }

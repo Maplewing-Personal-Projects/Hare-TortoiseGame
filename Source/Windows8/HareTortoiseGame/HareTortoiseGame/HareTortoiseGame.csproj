@@ -135,6 +135,7 @@
     <Compile Include="Component\Chess.cs" />
     <Compile Include="Component\ChessButton.cs" />
     <Compile Include="Component\Container.cs" />
+    <Compile Include="Component\FontComponent.cs" />
     <Compile Include="Component\GraphComponent.cs" />
     <Compile Include="GameLogic\BoardData.cs" />
     <Compile Include="GameLogic\ComputerAI.cs" />
@@ -146,8 +147,10 @@
     <Compile Include="Manager\StateManager.cs" />
     <Compile Include="PackageScene\GameBoardScene.cs" />
     <Compile Include="PackageScene\OPScene.cs" />
+    <Compile Include="PackageScene\SettingScene.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Setting.cs" />
     <Compile Include="State\DrawState.cs" />
     <Compile Include="TouchControl.cs" />
   </ItemGroup>
@@ -156,8 +159,16 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Content\blank.xnb" />
-    <Content Include="Content\Rabbit.png" />
-    <Content Include="Content\Turtle.png" />
+    <Content Include="Content\Rabbit.xnb" />
+    <Content Include="Content\Turtle.xnb" />
+    <Content Include="Content\Font.xnb" />
+    <Content Include="Content\Previous.xnb" />
+    <Content Include="Content\rightarrow.xnb" />
+    <Content Include="Content\Add.xnb" />
+    <Content Include="Content\Minus.xnb" />
+    <Content Include="Content\Computer.xnb" />
+    <Content Include="Content\User.xnb" />
+    <Content Include="Content\Next.xnb" />
     <None Include="HareTortoiseGame_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

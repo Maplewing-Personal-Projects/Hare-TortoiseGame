@@ -48,6 +48,12 @@ namespace HareTortoiseGame.Manager
             _currentColorAvoidSmallNumber = CurrentState.Color.ToVector4();
         }
 
+        public bool IsFinish()
+        {
+            if (_addframe <= 0 && _stateQueue.Count == 0) return true;
+            return false;
+        }
+
         public override void Update(GameTime gameTime) 
         {
             if (_addframe > 0)
