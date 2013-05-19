@@ -20,7 +20,7 @@ namespace HareTortoiseGame.Component
         Chess[] _hare;
         Chess[] _tortoise;
         Turn _nowTurn;
-        Player[] _players = {Player.Computer, Player.User};
+        Player[] _players = {Player.User, Player.Computer};
 
         #endregion
 
@@ -108,18 +108,25 @@ namespace HareTortoiseGame.Component
             }
 
             List<Tuple<int, Chess.Action>> possibleMove = new List<Tuple<int, Chess.Action>>();
+            bool turnOther = true;
             for (int i = 0; i < 3; ++i)
             {
-                possibleMove.AddRange(nowChess[i].GetAllPossibleMove());
-                possibleMove.AddRange(nowChess[i].GetAllGoalMove());
-            }
-            bool turnOther = true;
-            foreach (var possible in possibleMove)
-            {
-                if (!_chessbutton[possible.Item1].HaveChess)
+                if (nowChess[i].GetAllGoalMove().Count > 0)
                 {
                     turnOther = false;
                     break;
+                }
+                possibleMove.AddRange(nowChess[i].GetAllPossibleMove());
+            }
+            if (turnOther)
+            {
+                foreach (var possible in possibleMove)
+                {
+                    if (!_chessbutton[possible.Item1].HaveChess)
+                    {
+                        turnOther = false;
+                        break;
+                    }
                 }
             }
             if (turnOther)
@@ -185,7 +192,7 @@ namespace HareTortoiseGame.Component
                     }
                     for (int i = 0; i < 3; i++)
                     {
-                        if (nowChess[i].IsHit())
+                        if (nowChess[i].IsHit() && !nowChess[i].Finish)
                         {
                             for (int j = 0; j < GoalChessButton; ++j)
                             {
@@ -240,7 +247,7 @@ namespace HareTortoiseGame.Component
             }
             else
             {
-                ComputerAI.setComputerAI( new BoardData(_tortoise, _hare), 3, _nowTurn);
+                ComputerAI.setComputerAI( new BoardData(_tortoise, _hare), 12, _nowTurn);
                 Tuple<int, Chess.Action> move = ComputerAI.BestMove();
                 for (int i = 0; i < 3; ++i)
                 {

@@ -9,8 +9,13 @@ namespace HareTortoiseGame.GameLogic
         #region Properties
 
         static BoardData _board;
-        static int _maxPly;
+        static int _ply;
         static Board.Turn _nowTurn;
+        static int[] _stuck;
+        static int[,] _actionCount;
+        const int MinValue = -9999999;
+        const int MaxValue = 9999999;
+        //static Random _random = new Random();
         #endregion
 
         #region Methods
@@ -18,23 +23,25 @@ namespace HareTortoiseGame.GameLogic
         public static void setComputerAI(BoardData initBoard, int maxPly, Board.Turn nowTurn)
         {
             _board = initBoard;
-            _maxPly = maxPly;
+            _ply = maxPly;
             _nowTurn = nowTurn;
+            _stuck = new int[] {0, 0};
+            _actionCount = new int[,] { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } };
         }
 
         public static Tuple<int, Chess.Action> BestMove()
         {
-            Tuple<int, int, Chess.Action> result = AlphaBeta(_nowTurn, int.MinValue, int.MaxValue);
+            Tuple<int, int, Chess.Action> result = AlphaBeta(_nowTurn, MinValue, MaxValue);
             return new Tuple<int, Chess.Action>(result.Item2, result.Item3);
         }
 
         public static Tuple<int, int, Chess.Action> AlphaBeta(Board.Turn turn, int alpha, int beta)
         {
-            --_maxPly;
-            if (_board.TerminalTest() || _maxPly == 0)
-            { ++_maxPly; return new Tuple<int,int,Chess.Action>(Eval(_nowTurn, _board), -1, Chess.Action.None); }
+            --_ply;
+            if (_board.TerminalTest() || _ply == 0)
+            { ++_ply; return new Tuple<int, int, Chess.Action>(Eval(turn, _board), -1, Chess.Action.None); }
             
-            int value = int.MinValue;
+            int value = MinValue;
             int position = -1;
             Chess.Action action = Chess.Action.None;
             int goalMove = 0, leftMove = 0, rightMove = 0, upMove = 0, downMove = 0;
@@ -55,8 +62,10 @@ namespace HareTortoiseGame.GameLogic
 
             if (goalMove == 0 && leftMove == 0 && rightMove == 0 && upMove == 0 && downMove == 0)
             {
+                ++_stuck[(int)turn];
                 var result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
-                ++_maxPly;
+                ++_ply;
+                --_stuck[(int)turn];
                 return result;
             }
 
@@ -74,7 +83,12 @@ namespace HareTortoiseGame.GameLogic
                     _board.Tortoise &= ~move;
                 }
 
+                if (turn == Board.Turn.HareTurn) ++_actionCount[(int)turn, (int)Chess.Action.Right];
+                else ++_actionCount[(int)turn, (int)Chess.Action.Up];
                 Tuple<int,int,Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
+                if (turn == Board.Turn.HareTurn) --_actionCount[(int)turn, (int)Chess.Action.Right];
+                else --_actionCount[(int)turn, (int)Chess.Action.Up];
+                
                 if (-result.Item1 > value)
                 {
                     value = -result.Item1;
@@ -93,124 +107,7 @@ namespace HareTortoiseGame.GameLogic
                 }
 
                 if (value >= beta)
-                { ++_maxPly; return new Tuple<int, int, Chess.Action>(value, position, action); }
-                alpha = Math.Max(alpha, value);
-            }
-
-            while (leftMove != 0)
-            {
-                move = (leftMove & -leftMove);
-                leftMove &= ~move;
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare &= ~(move << 1);
-                    _board.Hare |= move;
-                }
-                else
-                {
-                    _board.Tortoise &= ~(move << 1);
-                    _board.Tortoise |= move;
-                }
-
-                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
-                if (-result.Item1 > value)
-                {
-                    value = -result.Item1;
-                    position = BoardData.GetOneChessPosition(move << 1);
-                    action = Chess.Action.Left;
-                }
-
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare |= move << 1;
-                    _board.Hare &= ~move;
-                }
-                else
-                {
-                    _board.Tortoise |= move << 1;
-                    _board.Tortoise &= ~move;
-                }
-
-                if (value >= beta)
-                { ++_maxPly; return new Tuple<int, int, Chess.Action>(value, position, action); }
-                alpha = Math.Max(alpha, value);
-            }
-
-            while (rightMove != 0)
-            {
-                move = (rightMove & -rightMove);
-                rightMove &= ~move;
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare &= ~(move >> 1);
-                    _board.Hare |= move;
-                }
-                else
-                {
-                    _board.Tortoise &= ~(move >> 1);
-                    _board.Tortoise |= move;
-                }
-
-                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
-                if (-result.Item1 > value)
-                {
-                    value = -result.Item1;
-                    position = BoardData.GetOneChessPosition(move >> 1);
-                    action = Chess.Action.Right;
-                }
-
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare |= move >> 1;
-                    _board.Hare &= ~move;
-                }
-                else
-                {
-                    _board.Tortoise |= move >> 1;
-                    _board.Tortoise &= ~move;
-                }
-
-                if (value >= beta)
-                { ++_maxPly; return new Tuple<int, int, Chess.Action>(value, position, action); }
-                alpha = Math.Max(alpha, value);
-            }
-
-            while (upMove != 0)
-            {
-                move = (upMove & -upMove);
-                upMove &= ~move;
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare &= ~(move << 4);
-                    _board.Hare |= move;
-                }
-                else
-                {
-                    _board.Tortoise &= ~(move << 4);
-                    _board.Tortoise |= move;
-                }
-
-                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
-                if (-result.Item1 > value)
-                {
-                    value = -result.Item1;
-                    position = BoardData.GetOneChessPosition(move << 4);
-                    action = Chess.Action.Up;
-                }
-
-                if (turn == Board.Turn.HareTurn)
-                {
-                    _board.Hare |= move << 4;
-                    _board.Hare &= ~move;
-                }
-                else
-                {
-                    _board.Tortoise |= move << 4;
-                    _board.Tortoise &= ~move;
-                }
-
-                if (value >= beta)
-                { ++_maxPly; return new Tuple<int, int, Chess.Action>(value, position, action); }
+                { ++_ply; return new Tuple<int, int, Chess.Action>(value, position, action); }
                 alpha = Math.Max(alpha, value);
             }
 
@@ -228,8 +125,9 @@ namespace HareTortoiseGame.GameLogic
                     _board.Tortoise &= ~(move >> 4);
                     _board.Tortoise |= move;
                 }
-
+                ++_actionCount[(int)turn, (int)Chess.Action.Down];
                 Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
+                --_actionCount[(int)turn, (int)Chess.Action.Down];
                 if (-result.Item1 > value)
                 {
                     value = -result.Item1;
@@ -249,11 +147,134 @@ namespace HareTortoiseGame.GameLogic
                 }
 
                 if (value >= beta)
-                { ++_maxPly; return new Tuple<int, int, Chess.Action>(value, position, action); }
+                { ++_ply; return new Tuple<int, int, Chess.Action>(value, position, action); }
                 alpha = Math.Max(alpha, value);
             }
 
-            ++_maxPly;
+            while (leftMove != 0)
+            {
+                move = (leftMove & -leftMove);
+                leftMove &= ~move;
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare &= ~(move << 1);
+                    _board.Hare |= move;
+                }
+                else
+                {
+                    _board.Tortoise &= ~(move << 1);
+                    _board.Tortoise |= move;
+                }
+
+                ++_actionCount[(int)turn, (int)Chess.Action.Left];
+                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
+                --_actionCount[(int)turn, (int)Chess.Action.Left]; 
+                if (-result.Item1 > value)
+                {
+                    value = -result.Item1;
+                    position = BoardData.GetOneChessPosition(move << 1);
+                    action = Chess.Action.Left;
+                }
+
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare |= move << 1;
+                    _board.Hare &= ~move;
+                }
+                else
+                {
+                    _board.Tortoise |= move << 1;
+                    _board.Tortoise &= ~move;
+                }
+
+                if (value >= beta)
+                { ++_ply; return new Tuple<int, int, Chess.Action>(value, position, action); }
+                alpha = Math.Max(alpha, value);
+            }
+
+            while (rightMove != 0)
+            {
+                move = (rightMove & -rightMove);
+                rightMove &= ~move;
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare &= ~(move >> 1);
+                    _board.Hare |= move;
+                }
+                else
+                {
+                    _board.Tortoise &= ~(move >> 1);
+                    _board.Tortoise |= move;
+                }
+
+                ++_actionCount[(int)turn, (int)Chess.Action.Right];
+                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
+                --_actionCount[(int)turn, (int)Chess.Action.Right]; 
+                if (-result.Item1 > value)
+                {
+                    value = -result.Item1;
+                    position = BoardData.GetOneChessPosition(move >> 1);
+                    action = Chess.Action.Right;
+                }
+
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare |= move >> 1;
+                    _board.Hare &= ~move;
+                }
+                else
+                {
+                    _board.Tortoise |= move >> 1;
+                    _board.Tortoise &= ~move;
+                }
+
+                if (value >= beta)
+                { ++_ply; return new Tuple<int, int, Chess.Action>(value, position, action); }
+                alpha = Math.Max(alpha, value);
+            }
+
+            while (upMove != 0)
+            {
+                move = (upMove & -upMove);
+                upMove &= ~move;
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare &= ~(move << 4);
+                    _board.Hare |= move;
+                }
+                else
+                {
+                    _board.Tortoise &= ~(move << 4);
+                    _board.Tortoise |= move;
+                }
+
+                ++_actionCount[(int)turn, (int)Chess.Action.Up];
+                Tuple<int, int, Chess.Action> result = AlphaBeta((Board.Turn)((int)turn ^ 1), -beta, -alpha);
+                --_actionCount[(int)turn, (int)Chess.Action.Up]; 
+                if (-result.Item1 > value)
+                {
+                    value = -result.Item1;
+                    position = BoardData.GetOneChessPosition(move << 4);
+                    action = Chess.Action.Up;
+                }
+
+                if (turn == Board.Turn.HareTurn)
+                {
+                    _board.Hare |= move << 4;
+                    _board.Hare &= ~move;
+                }
+                else
+                {
+                    _board.Tortoise |= move << 4;
+                    _board.Tortoise &= ~move;
+                }
+
+                if (value >= beta)
+                { ++_ply; return new Tuple<int, int, Chess.Action>(value, position, action); }
+                alpha = Math.Max(alpha, value);
+            }
+
+            ++_ply;
             return new Tuple<int, int, Chess.Action>(value, position, action);
         }
 
@@ -270,30 +291,19 @@ namespace HareTortoiseGame.GameLogic
 
         public static int Eval(Board.Turn turn, BoardData board)
         {
-            int score = 0;
-            if (turn == Board.Turn.HareTurn)
+            int hareScore = 16, tortoiseScore = 16;
+            
+            for (int i = 0; i < 4; ++i)
             {
-                score = 10000 *(3 - CountBit(board.Hare));
-                for (int i = 0; i < 4; ++i)
-                {
-                    score += 100 * (i + 1) * CountBit(board.Tortoise & BoardData.Row[i]);
-                    score -= 100 * (4 - i) * CountBit(board.Hare & BoardData.Column[i]);
-                    score += (4 - i) * CountBit(board.Hare & BoardData.Row[i]);
-                    score -= (i + 1) * CountBit(board.Tortoise & BoardData.Column[i]);
-                }
+                hareScore -= (4 - i) * CountBit(board.Hare & BoardData.Column[i]);
+                tortoiseScore -= (i + 1) * CountBit(board.Tortoise & BoardData.Row[i]);
             }
-            else
-            {
-                score = 10000 * (3 - CountBit(board.Tortoise));
-                for (int i = 0; i < 4; ++i)
-                {
-                    score += 100 * (4 - i) * CountBit(board.Hare & BoardData.Column[i]);
-                    score -= 100 * (i + 1) * CountBit(board.Tortoise & BoardData.Row[i]);
-                    score += (i + 1) * CountBit(board.Tortoise & BoardData.Column[i]);
-                    score += (4 - i) * CountBit(board.Hare & BoardData.Row[i]);
-                }
-            }
-            return score;
+
+            if (board.Hare == 0) hareScore += 100;
+            else if (board.Tortoise == 0) tortoiseScore += 100;
+
+            if (turn == Board.Turn.HareTurn) return hareScore - tortoiseScore;
+            else return tortoiseScore - hareScore;
         }
 
         #endregion

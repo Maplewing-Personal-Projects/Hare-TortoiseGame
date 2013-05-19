@@ -22,11 +22,11 @@
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\HareTortoiseGame.exe">
       <PackagePath>HareTortoiseGame.exe</PackagePath>
-      <Modified>2013-05-18T11:05:57.240</Modified>
+      <Modified>2013-05-19T09:00:46.135</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Maplewing\Documents\GitHub\Hare-TortoiseGame\Source\Windows8\HareTortoiseGame\HareTortoiseGame\bin\Windows8\Debug\HareTortoiseGame.pdb">
       <PackagePath>HareTortoiseGame.pdb</PackagePath>
-      <Modified>2013-05-18T11:05:57.202</Modified>
+      <Modified>2013-05-19T09:00:46.104</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\MSBuild\..\MonoGame\v3.0\Assemblies\Windows8\MonoGame.Framework.dll">
       <PackagePath>MonoGame.Framework.dll</PackagePath>
