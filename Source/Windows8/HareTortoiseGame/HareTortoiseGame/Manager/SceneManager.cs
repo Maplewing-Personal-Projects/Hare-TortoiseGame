@@ -20,6 +20,10 @@ namespace HareTortoiseGame.Manager
             CurrentScene = MakeScene(sceneName);
         }
 
+        #endregion
+
+        #region Method
+
         private Scene MakeScene(string sceneName)
         {
             Scene scene = null;

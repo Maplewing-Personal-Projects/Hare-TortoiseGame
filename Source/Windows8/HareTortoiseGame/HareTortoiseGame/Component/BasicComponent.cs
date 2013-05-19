@@ -22,6 +22,9 @@ namespace HareTortoiseGame.Component
             PreviousBounds = game.GraphicsDevice.Viewport;
         }
 
+        #endregion
+
+        #region Method
         public virtual void Start()
         {
             Game.Components.Add(this);

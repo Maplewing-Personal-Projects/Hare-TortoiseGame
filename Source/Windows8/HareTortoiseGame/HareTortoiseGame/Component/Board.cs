@@ -10,8 +10,11 @@ namespace HareTortoiseGame.Component
 {
     public class Board : Container
     {
+        #region Enum
         public enum Turn { TortoiseTurn = 0, HareTurn = 1 };
         public enum Player { User, Computer };
+        #endregion
+
         #region Field
         public const int TotalChessButton = 16;
         public const int GoalChessButton = 8;
@@ -92,7 +95,7 @@ namespace HareTortoiseGame.Component
 
         #endregion
 
-        #region Methods
+        #region Method
 
         public override void Update(GameTime gameTime)
         {

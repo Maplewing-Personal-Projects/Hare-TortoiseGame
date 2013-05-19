@@ -32,6 +32,10 @@ namespace HareTortoiseGame.Component
             PreviousBounds = game.GraphicsDevice.Viewport;
         }
 
+        #endregion
+
+        #region Method
+
         public Rectangle Bounds()
         {
             return new Rectangle((int)(PreviousBounds.X + PreviousBounds.Width * _state.CurrentState.Bounds.X),

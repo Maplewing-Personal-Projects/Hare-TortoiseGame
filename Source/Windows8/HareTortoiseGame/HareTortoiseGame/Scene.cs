@@ -7,7 +7,7 @@ namespace HareTortoiseGame
 {
     public class Scene : Container
     {
-        #region Variable
+        #region Field
 
         public string NextScene = null;
 

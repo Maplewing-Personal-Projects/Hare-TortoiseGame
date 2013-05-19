@@ -11,13 +11,15 @@ namespace HareTortoiseGame.Component
 {
     public class Chess : GraphComponent
     {
+        #region Enum
         public enum Type { Tortoise, Hare };
         public enum Action { Left = 1, Right = 2, Up = 3, Down = 4, None = 0};
+        #endregion
 
         #region Field
         #endregion
 
-        #region Properties
+        #region Property
 
         public Type ChessType { get; private set; }
         public int X { get; private set; }
@@ -39,7 +41,7 @@ namespace HareTortoiseGame.Component
 
         #endregion
 
-        #region Methods
+        #region Method
 
         public void Move(Action action)
         {

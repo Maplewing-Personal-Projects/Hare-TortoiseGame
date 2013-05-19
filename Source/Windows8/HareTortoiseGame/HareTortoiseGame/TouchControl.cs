@@ -12,7 +12,7 @@ namespace HareTortoiseGame
 {
     public static class TouchControl
     {
-        #region Fields
+        #region Field
 
         static MouseState _previousMouseState;
         static MouseState _currentMouseState;
@@ -21,10 +21,10 @@ namespace HareTortoiseGame
 
         #endregion
 
-        #region Properties
+        #region Property
         #endregion
 
-        #region Methods
+        #region Method
 
         public static void Update(GameTime gameTime)
         {

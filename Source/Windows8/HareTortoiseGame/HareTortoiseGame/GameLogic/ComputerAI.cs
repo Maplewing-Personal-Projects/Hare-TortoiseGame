@@ -6,7 +6,7 @@ namespace HareTortoiseGame.GameLogic
     public static class ComputerAI
     {
 
-        #region Properties
+        #region Field
 
         static BoardData _board;
         static int _ply;
@@ -18,7 +18,7 @@ namespace HareTortoiseGame.GameLogic
         //static Random _random = new Random();
         #endregion
 
-        #region Methods
+        #region Method
 
         public static void setComputerAI(BoardData initBoard, int maxPly, Board.Turn nowTurn)
         {

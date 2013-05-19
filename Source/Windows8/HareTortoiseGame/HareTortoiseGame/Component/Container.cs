@@ -21,7 +21,9 @@ namespace HareTortoiseGame.Component
         {
             _contain = new List<BasicComponent>();
         }
+        #endregion
 
+        #region Method
         public override void Update(GameTime gameTime)
         {
             foreach (var bc in _contain)

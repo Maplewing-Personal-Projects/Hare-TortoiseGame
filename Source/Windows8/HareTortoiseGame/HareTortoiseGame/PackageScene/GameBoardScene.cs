@@ -33,6 +33,10 @@ namespace HareTortoiseGame.PackageScene
             AddComponent(_panel);
         }
 
+        #endregion
+
+        #region Method
+
         public override void Initialize()
         {
             _state.AddState(0.5f, new DrawState(Game, new Vector4(0, 0, 1, 1), Color.Gray));

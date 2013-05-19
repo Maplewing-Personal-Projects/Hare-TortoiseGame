@@ -37,7 +37,7 @@ namespace HareTortoiseGame.Manager
 
         #endregion
 
-        #region Methods
+        #region Method
 
         public StateManager(Game game, DrawState state) : base(game)
         {
