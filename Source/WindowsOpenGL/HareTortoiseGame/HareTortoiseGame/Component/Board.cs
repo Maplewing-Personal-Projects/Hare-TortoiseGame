@@ -256,7 +256,7 @@ namespace HareTortoiseGame.Component
                     }
                     if (_computerAITask == null && _players[(int)NowTurn] == Player.Computer)
                     {
-                        ComputerAI.setComputerAI(new BoardData(_tortoise, _hare), 12, NowTurn);
+                        ComputerAI.setComputerAI(new BoardData(_tortoise, _hare), Setting.MaxPly, NowTurn);
                         _computerAITask = new Task<Tuple<int, Chess.Action>>(ComputerAI.BestMove);
                         _computerAITask.Start();
                     }
