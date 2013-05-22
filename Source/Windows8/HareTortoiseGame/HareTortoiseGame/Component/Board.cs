@@ -110,6 +110,9 @@ namespace HareTortoiseGame.Component
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
+            if (!IsFinish()) return;
             if (!(TortoiseVictory() || HareVictory()))
             {
                 Chess[] nowChess = null;
@@ -128,6 +131,13 @@ namespace HareTortoiseGame.Component
 
                 if (NowState == BoardState.WaitIO)
                 {
+                    CheckPass(nowChess);
+                    if (_players[(int)NowTurn] == Player.Computer)
+                    {
+                        NowState = BoardState.Animation;
+                        return;
+                    }
+
                     if (TouchControl.IsMouseClick() || TouchControl.IsTouchClick())
                     {
                         for (int i = 0; i < GoalChessButton; ++i)
@@ -291,7 +301,7 @@ namespace HareTortoiseGame.Component
                     }
                 }
             }
-            base.Update(gameTime);
+            
         }
 
         private void CheckPass(Chess[] nowChess)
