@@ -130,29 +130,29 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Component\BasicComponent.cs" />
+    <Compile Include="Library\Component\BasicComponent.cs" />
     <Compile Include="Component\Board.cs" />
     <Compile Include="Component\Chess.cs" />
     <Compile Include="Component\ChessButton.cs" />
-    <Compile Include="Component\Container.cs" />
-    <Compile Include="Component\FontComponent.cs" />
-    <Compile Include="Component\GraphComponent.cs" />
+    <Compile Include="Library\Component\Container.cs" />
+    <Compile Include="Library\Component\FontComponent.cs" />
+    <Compile Include="Library\Component\GraphComponent.cs" />
     <Compile Include="GameLogic\BoardData.cs" />
     <Compile Include="GameLogic\ComputerAI.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainGame.cs" />
-    <Compile Include="Manager\SceneManager.cs" />
-    <Compile Include="Manager\StateManager.cs" />
+    <Compile Include="Library\Manager\SceneManager.cs" />
+    <Compile Include="Library\Manager\StateManager.cs" />
     <Compile Include="PackageScene\GameBoardScene.cs" />
     <Compile Include="PackageScene\OPScene.cs" />
     <Compile Include="PackageScene\SettingScene.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scene.cs" />
+    <Compile Include="Library\Scene.cs" />
     <Compile Include="Setting.cs" />
-    <Compile Include="State\DrawState.cs" />
-    <Compile Include="TouchControl.cs" />
+    <Compile Include="Library\State\DrawState.cs" />
+    <Compile Include="Library\TouchControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

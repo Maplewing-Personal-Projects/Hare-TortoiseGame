@@ -13,7 +13,7 @@ namespace HareTortoiseGame.Component
     {
         #region Enum
         public enum Type { Tortoise, Hare };
-        public enum Action { Left = 1, Right = 2, Up = 3, Down = 4, None = 0};
+        public enum Action { Left = 1, Right = 2, Up = 3, Down = 4, None = 0, Goal = 5};
         #endregion
 
         #region Field
@@ -24,7 +24,7 @@ namespace HareTortoiseGame.Component
         public Type ChessType { get; private set; }
         public int X { get; private set; }
         public int Y { get; private set; }
-        public bool Finish { get; private set; }
+        public bool GoalArrived { get; private set; }
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace HareTortoiseGame.Component
             ChessType = chessType;
             X = x;
             Y = y;
-            Finish = false;
+            GoalArrived = false;
         }
 
         #endregion
@@ -50,26 +50,26 @@ namespace HareTortoiseGame.Component
                 case Action.Left:
                     X -= 1;
                     AddState( 0.2f, new DrawState(Game,
-                        new Vector4(_state.LastState.Bounds.X - 0.25f, _state.LastState.Bounds.Y,
+                        new Vector4(_state.LastState.Bounds.X - (1.0f / Setting.MaxEdgeCount), _state.LastState.Bounds.Y,
                             _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                 break;
                 case Action.Right:
                     X += 1;
-                    if (X <= 3)
+                    if (X < Setting.MaxEdgeCount)
                     {
                         AddState(0.2f, new DrawState(Game,
-                            new Vector4(_state.LastState.Bounds.X + 0.25f, _state.LastState.Bounds.Y,
+                            new Vector4(_state.LastState.Bounds.X + (1.0f / Setting.MaxEdgeCount), _state.LastState.Bounds.Y,
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                     }
                     else
                     {
                         AddState(0.2f, new DrawState(Game,
-                            new Vector4(_state.LastState.Bounds.X + 0.25f, _state.LastState.Bounds.Y,
+                            new Vector4(_state.LastState.Bounds.X + (1.0f / Setting.MaxEdgeCount), _state.LastState.Bounds.Y,
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         AddState(0.2f, new DrawState(Game,
                             new Vector4(_state.LastState.Bounds.X + 1f, _state.LastState.Bounds.Y,
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
-                        Finish = true;
+                        GoalArrived = true;
                     }
                 break;
                 case Action.Up:
@@ -77,56 +77,57 @@ namespace HareTortoiseGame.Component
                     if (Y >= 0)
                     {
                         AddState(0.2f, new DrawState(Game,
-                            new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 0.25f,
+                            new Vector4(_state.LastState.Bounds.X, 
+                                _state.LastState.Bounds.Y - (1.0f / Setting.MaxEdgeCount),
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                     }
                     else
                     {
                         AddState(0.2f, new DrawState(Game,
-                            new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 0.25f,
+                            new Vector4(_state.LastState.Bounds.X,
+                                _state.LastState.Bounds.Y - (1.0f / Setting.MaxEdgeCount),
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                         AddState(0.2f, new DrawState(Game,
                             new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y - 1f,
                                 _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
-                        Finish = true;
+                        GoalArrived = true;
                     }
                 break;
                 case Action.Down:
                     Y += 1;
                     AddState(0.2f, new DrawState(Game,
-                        new Vector4(_state.LastState.Bounds.X, _state.LastState.Bounds.Y + 0.25f,
+                        new Vector4(_state.LastState.Bounds.X, 
+                            _state.LastState.Bounds.Y + (1.0f / Setting.MaxEdgeCount),
                             _state.LastState.Bounds.Z, _state.LastState.Bounds.W), Color.White));
                 
                 break;
             }
         }
-
-        public List< Tuple<int,Action> > GetAllPossibleMove()
+        public List< Tuple<int, Action> > GetAllPossibleMove()
         {
             List<Tuple<int, Action>> neighbor = new List<Tuple<int, Action>>();
-            if (!Finish)
+            if (!GoalArrived)
             {
                 if (Y != 0)
-                    neighbor.Add(new Tuple<int, Action>((Y - 1) * 4 + X, Action.Up));
-                if (X != 3)
-                    neighbor.Add(new Tuple<int, Action>(Y * 4 + X + 1, Action.Right));
+                    neighbor.Add(new Tuple<int, Action>((Y - 1) * Setting.MaxEdgeCount + X, Action.Up));
+                if (X != Setting.MaxEdgeCount - 1)
+                    neighbor.Add(new Tuple<int, Action>(Y * Setting.MaxEdgeCount + X + 1, Action.Right));
                 if (ChessType == Type.Tortoise && X != 0)
-                    neighbor.Add(new Tuple<int, Action>(Y * 4 + X - 1, Action.Left));
-                if (ChessType == Type.Hare && Y != 3)
-                    neighbor.Add(new Tuple<int, Action>((Y + 1) * 4 + X, Action.Down));
+                    neighbor.Add(new Tuple<int, Action>(Y * Setting.MaxEdgeCount + X - 1, Action.Left));
+                if (ChessType == Type.Hare && Y != Setting.MaxEdgeCount - 1)
+                    neighbor.Add(new Tuple<int, Action>((Y + 1) * Setting.MaxEdgeCount + X, Action.Down));
             }
             return neighbor;
         }
-
-        public List<Tuple<int, Action>> GetAllGoalMove()
+        public List< Tuple<int, Action> > GetAllGoalMove()
         {
             List<Tuple<int, Action>> neighbor = new List<Tuple<int, Action>>();
-            if (!Finish)
+            if (!GoalArrived)
             {
                 if (ChessType == Type.Tortoise && Y == 0)
                     neighbor.Add(new Tuple<int, Action>(X, Action.Up));
-                if (ChessType == Type.Hare && X == 3)
-                    neighbor.Add(new Tuple<int, Action>(4 + Y, Action.Right));
+                if (ChessType == Type.Hare && X == Setting.MaxEdgeCount - 1)
+                    neighbor.Add(new Tuple<int, Action>(Setting.MaxEdgeCount + Y, Action.Right));
             }
             return neighbor;
         }

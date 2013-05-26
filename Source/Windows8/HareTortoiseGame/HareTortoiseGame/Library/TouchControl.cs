@@ -35,6 +35,11 @@ namespace HareTortoiseGame
             else _currentGestureSample = null;
         }
 
+        public static bool IsClick()
+        {
+            return IsMouseClick() || IsTouchClick();
+        }
+
         public static bool IsMouseClick()
         {
             return (_currentMouseState.LeftButton == ButtonState.Released &&
