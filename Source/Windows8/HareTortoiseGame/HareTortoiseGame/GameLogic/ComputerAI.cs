@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using HareTortoiseGame.Component;
 
 namespace HareTortoiseGame.GameLogic
 {
     public class ComputerAI
     {
-
         #region Field
 
         BoardData _board;
@@ -13,6 +14,10 @@ namespace HareTortoiseGame.GameLogic
         Board.Turn _nowTurn;
         int[] _stuck;
         int[,] _actionCount;
+        bool _top;
+
+        int _bestPosition = -1;
+        Chess.Action _bestAction = Chess.Action.None;
 
         const int WinValue = 1000;
         const int MinValue = -9999999;
@@ -22,6 +27,14 @@ namespace HareTortoiseGame.GameLogic
 
         #region Method
 
+        static void Swap<T>(ref T lhs, ref T rhs)
+        {
+            T temp;
+            temp = lhs;
+            lhs = rhs;
+            rhs = temp;
+        }
+
         public ComputerAI(BoardData initBoard, int maxPly, Board.Turn nowTurn)
         {
             _board = initBoard;
@@ -29,23 +42,26 @@ namespace HareTortoiseGame.GameLogic
             _nowTurn = nowTurn;
             _stuck = new int[] { 0, 0 };
             _actionCount = new int[,] { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
+            _top = true;
         }
 
         public Tuple<int, Chess.Action> BestMove()
         {
-            Tuple<int, int, Chess.Action> result = AlphaBeta(_nowTurn, MinValue, MaxValue);
-            return new Tuple<int, Chess.Action>(result.Item2, result.Item3);
+            _top = true;
+            int result = AlphaBeta(_nowTurn, MinValue, MaxValue);
+            return new Tuple<int, Chess.Action>(_bestPosition, _bestAction);
         }
 
-        private Tuple<int, int, Chess.Action> AlphaBeta(Board.Turn turn, int alpha, int beta)
+        private int AlphaBeta(Board.Turn turn, int alpha, int beta)
         {
+            bool top = false;
+            Swap(ref _top,ref top);
+
             --_ply;
             if (_board.TerminalTest() || _ply == 0)
-            { ++_ply; return new Tuple<int, int, Chess.Action>(Eval(turn, _board), -1, Chess.Action.None); }
+            { ++_ply; return Eval(turn, _board); }
             
             int value = MinValue;
-            int position = -1;
-            Chess.Action action = Chess.Action.None;
             ulong goalMove = 0, leftMove = 0, rightMove = 0, upMove = 0, downMove = 0;
 
             GetAllMove(turn, ref goalMove, ref leftMove, ref rightMove, ref upMove, ref downMove);
@@ -59,26 +75,26 @@ namespace HareTortoiseGame.GameLogic
                 return result;
             }
 
-            var returnValue = TestMove(turn, ref alpha, beta, ref value, ref position, ref action, ref goalMove, Chess.Action.Goal);
-            if (returnValue != null) return returnValue;
+            var returnValue = TestMove(turn, ref alpha, beta, ref value, top, ref goalMove, Chess.Action.Goal);
+            if (returnValue.HasValue) return returnValue.Value;
 
-            returnValue = TestMove(turn, ref alpha, beta, ref value, ref position, ref action, ref rightMove, Chess.Action.Right);
-            if (returnValue != null) return returnValue;
+            returnValue = TestMove(turn, ref alpha, beta, ref value, top, ref rightMove, Chess.Action.Right);
+            if (returnValue.HasValue) return returnValue.Value;
 
-            returnValue = TestMove(turn, ref alpha, beta, ref value, ref position, ref action, ref upMove, Chess.Action.Up);
-            if (returnValue != null) return returnValue;
+            returnValue = TestMove(turn, ref alpha, beta, ref value, top, ref upMove, Chess.Action.Up);
+            if (returnValue.HasValue) return returnValue.Value;
 
-            returnValue = TestMove(turn, ref alpha, beta, ref value, ref position, ref action, ref downMove, Chess.Action.Down);
-            if (returnValue != null) return returnValue;
+            returnValue = TestMove(turn, ref alpha, beta, ref value, top, ref downMove, Chess.Action.Down);
+            if (returnValue.HasValue) return returnValue.Value;
 
-            returnValue = TestMove(turn, ref alpha, beta, ref value, ref position, ref action, ref leftMove, Chess.Action.Left);
-            if (returnValue != null) return returnValue; 
+            returnValue = TestMove(turn, ref alpha, beta, ref value, top, ref leftMove, Chess.Action.Left);
+            if (returnValue.HasValue) return returnValue.Value; 
 
             ++_ply;
-            return new Tuple<int, int, Chess.Action>(value, position, action);
+            return value;
         }
-        private Tuple<int, int, Chess.Action> TestMove(Board.Turn turn, ref int alpha, 
-            int beta, ref int bestValue, ref int bestPosition, ref Chess.Action bestAction, 
+        private int? TestMove(Board.Turn turn, ref int alpha, 
+            int beta, ref int bestValue, bool top, 
             ref ulong allMove, Chess.Action action)
         {
             ulong move;
@@ -88,27 +104,30 @@ namespace HareTortoiseGame.GameLogic
                 allMove = DeleteAMove(allMove, move);
 
                 MoveBoard(turn, action, move);
-                Tuple<int, int, Chess.Action> result = AlphaBeta(TurnTheTurn(turn), -beta, -alpha);
+                int result = AlphaBeta(TurnTheTurn(turn), -beta, -alpha);
                 UnMoveBoard(turn, action, move);
 
-                if (-result.Item1 > bestValue)
+                if (-result > bestValue)
                 {
-                    bestValue = -result.Item1;
-                    bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(action, move));
-                    if (turn == Board.Turn.HareTurn)
+                    bestValue = -result;
+                    if (top)
                     {
-                        if (action == Chess.Action.Goal) bestAction = Chess.Action.Right;
-                        else bestAction = action;
-                    }
-                    else
-                    {
-                        if (action == Chess.Action.Goal) bestAction = Chess.Action.Up;
-                        else bestAction = action;
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(action, move));
+                        if (turn == Board.Turn.HareTurn)
+                        {
+                            if (action == Chess.Action.Goal) _bestAction = Chess.Action.Right;
+                            else _bestAction = action;
+                        }
+                        else
+                        {
+                            if (action == Chess.Action.Goal) _bestAction = Chess.Action.Up;
+                            else _bestAction = action;
+                        }
                     }
                 }
 
                 if (bestValue >= beta)
-                { ++_ply; return new Tuple<int, int, Chess.Action>(bestValue, bestPosition, bestAction); }
+                { ++_ply; return bestValue; }
                 alpha = Math.Max(alpha, bestValue);
             }
             return null;

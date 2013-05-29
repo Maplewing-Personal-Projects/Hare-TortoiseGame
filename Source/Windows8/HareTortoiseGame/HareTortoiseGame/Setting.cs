@@ -7,13 +7,13 @@ namespace HareTortoiseGame
     public static class Setting
     {
         #region Field
-        static int _maxPly = 12;
+        static int _maxPlyOrSecond = 12;
         static Board.Player[] _players = { Board.Player.User, Board.Player.Computer };
         static int _maxEdgeCount = 4;
         #endregion
 
         #region Property
-        public static int MaxPly { get { return _maxPly; } set { _maxPly = value; } }
+        public static int MaxPly { get { return _maxPlyOrSecond; } set { _maxPlyOrSecond = value; } }
         public static Board.Player[] Players { get { return _players; } set { _players = value; } }
         public static int MaxEdgeCount { 
             get { return _maxEdgeCount; } 

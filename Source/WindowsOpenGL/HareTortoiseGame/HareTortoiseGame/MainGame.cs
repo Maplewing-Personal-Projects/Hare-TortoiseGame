@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using HareTortoiseGame.Manager;
 
 namespace HareTortoiseGame
@@ -27,6 +29,8 @@ namespace HareTortoiseGame
         /// </summary>
         protected override void Initialize()
         {
+            MediaPlayer.Volume = 0.3f;
+            SoundEffect.MasterVolume = 1.0f;
             // TODO: Add your initialization logic here
             _sceneManager = new SceneManager(this, "Setting");
             _sceneManager.Start();
@@ -63,6 +67,7 @@ namespace HareTortoiseGame
         {
             // TODO: Add your update logic here
             _sceneManager.PreviousBounds = _graphics.GraphicsDevice.Viewport;
+            
             TouchControl.Update(gameTime);
             base.Update(gameTime);
         }

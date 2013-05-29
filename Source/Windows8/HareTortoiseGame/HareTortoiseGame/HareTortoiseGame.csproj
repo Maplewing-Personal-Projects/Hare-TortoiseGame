@@ -158,8 +158,11 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Content\25.wma" />
     <Content Include="Content\blank.xnb" />
+    <Content Include="Content\EmeraldHillClassic.wma" />
     <Content Include="Content\Rabbit.xnb" />
+    <Content Include="Content\SunsetParkModern.wma" />
     <Content Include="Content\Turtle.xnb" />
     <Content Include="Content\Font.xnb" />
     <Content Include="Content\Previous.xnb" />
@@ -169,6 +172,14 @@
     <Content Include="Content\Computer.xnb" />
     <Content Include="Content\User.xnb" />
     <Content Include="Content\Next.xnb" />
+    <Content Include="Content\RabbitWin.xnb" />
+    <Content Include="Content\TurtleWin.xnb" />
+    <Content Include="Content\EmeraldHillClassic.xnb" />
+    <Content Include="Content\misc_menu_4.xnb" />
+    <Content Include="Content\negative_2.xnb" />
+    <Content Include="Content\save.xnb" />
+    <Content Include="Content\SunsetParkModern.xnb" />
+    <Content Include="Content\25.xnb" />
     <None Include="HareTortoiseGame_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

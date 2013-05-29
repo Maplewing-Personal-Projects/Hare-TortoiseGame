@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 using HareTortoiseGame.State;
 using HareTortoiseGame.Component;
 
@@ -13,11 +15,20 @@ namespace HareTortoiseGame.PackageScene
         Container _panel;
         FontComponent _view;
         FontComponent _stateView;
-        FontComponent _noMove;
+        FontComponent _alertMessage;
         GraphComponent _tortoise;
         GraphComponent _hare;
         GraphComponent _rightArrow;
         GraphComponent _back;
+
+        GraphComponent _hareWin;
+        GraphComponent _tortoiseWin;
+
+        Song _backgroundSong;
+        Song _victory;
+
+        SoundEffect _start;
+        SoundEffect _clickError;
 
         Board.Turn _turn;
         bool _nomove;
@@ -30,17 +41,32 @@ namespace HareTortoiseGame.PackageScene
                 game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
+            _backgroundSong = game.Content.Load<Song>("SunsetParkModern");
+            _victory = game.Content.Load<Song>("25");
+
+            _start = game.Content.Load<SoundEffect>("save");
+            _clickError = game.Content.Load<SoundEffect>("negative_2");
+
             _board = new Board(game, game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
             _board.AddState(0.5f, new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
             _board.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.1f, 0.6f, 0.8f), Color.Gray));
+
+            _hareWin = new GraphComponent(game, game.Content.Load<Texture2D>("RabbitWin"),
+                new DrawState(game, new Vector4(0.5f, 0.5f, 0.0f, 0.0f), Color.PowderBlue));
+            _tortoiseWin = new GraphComponent(game, game.Content.Load<Texture2D>("TurtleWin"),
+                new DrawState(game, new Vector4(0.5f, 0.5f, 0.0f, 0.0f), Color.PowderBlue));
+            _board.AddComponent(_hareWin);
+            _board.AddComponent(_tortoiseWin);
+
             _panel = new Container(game, game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(0f, 0f, 0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
             _panel.AddState(0.5f, new DrawState(game, new Vector4(0f, 0f, 0f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
             _panel.AddState(0.5f, new DrawState(game, new Vector4(0f, 0f, 0.3f, 1.0f), new Color(0.0f, 0.0f, 0.0f, 0.3f)));
-            _noMove = new FontComponent(game, game.Content.Load<SpriteFont>("Font"),
+
+            _alertMessage = new FontComponent(game, game.Content.Load<SpriteFont>("Font"),
                 new DrawState(game, new Vector4(0.1f, 0.25f, 0.8f, 0f), new Color(0.0f, 0.0f, 0.0f, 0.0f)));
-            _noMove.Content = "不能移動狀況產生！";
+            _alertMessage.Content = "不能移動狀況產生！";
             _view = new FontComponent(game, game.Content.Load<SpriteFont>("Font"), 
                 new DrawState( game, new Vector4( 0.2f, 0.05f, 0.0f, 0.0f ), Color.White));
             _view.AddState(0.5f, new DrawState(game, new Vector4(0.2f, 0.05f, 0.0f, 0.0f), Color.White));
@@ -66,7 +92,7 @@ namespace HareTortoiseGame.PackageScene
             AddComponent(_board);
             _panel.AddComponent(_view);
             _panel.AddComponent(_stateView);
-            _panel.AddComponent(_noMove);
+            _panel.AddComponent(_alertMessage);
             _panel.AddComponent(_tortoise);
             _panel.AddComponent(_hare);
             _panel.AddComponent(_rightArrow);
@@ -86,8 +112,18 @@ namespace HareTortoiseGame.PackageScene
 
         public override void Update(GameTime gameTime)
         {
+            if (_board.IsFinish())
+            {
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.Play(_backgroundSong);
+                }
+            }
+
             if (_back.IsHit())
             {
+                _start.Play();
+                MediaPlayer.Stop();
                 _back.ClearAllAndAddState(0.2f,
                     new DrawState(Game, new Vector4(0.3f, 0.75f, 0.4f, 0.2f), Color.Red));
                 NextScene = "Setting";
@@ -120,26 +156,39 @@ namespace HareTortoiseGame.PackageScene
             }
             if (_board.TortoiseVictory())
             {
-                _noMove.Content = "烏龜獲勝！";
-                _noMove.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
+                if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == _backgroundSong)
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(_victory);
+                }
+                _alertMessage.Content = "烏龜獲勝！";
+                _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
+                _tortoiseWin.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0f, 0f, 1f, 1f), Color.PowderBlue));
             }
             else if (_board.HareVictory())
             {
-                _noMove.Content = "兔子獲勝！";
-                _noMove.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
+                if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == _backgroundSong)
+                {
+                    MediaPlayer.Stop();
+                    MediaPlayer.Play(_victory);
+                }
+                _alertMessage.Content = "兔子獲勝！";
+                _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
+                _hareWin.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0f, 0f, 1f, 1f), Color.PowderBlue));
             }
             else if (_nomove != _board.NoMove)
             {
                 _nomove = _board.NoMove;
                 if (_nomove)
                 {
-                    _noMove.Content = "不能移動狀況產生！";
-                    _noMove.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
+                    _clickError.Play();
+                    _alertMessage.Content = "不能移動狀況產生！";
+                    _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
                 }
                 else
                 {
-                    _noMove.Content = "不能移動狀況產生！";
-                    _noMove.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), new Color(0.0f, 0.0f, 0.0f, 0.0f)));
+                    _alertMessage.Content = "不能移動狀況產生！";
+                    _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), new Color(0.0f, 0.0f, 0.0f, 0.0f)));
                 }
             }
             base.Update(gameTime);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 using HareTortoiseGame.State;
 using HareTortoiseGame.GameLogic;
@@ -25,6 +26,10 @@ namespace HareTortoiseGame.Component
         Chess[] _hare;
         Chess[] _tortoise;
         Player[] _players;
+
+        SoundEffect _click;
+        SoundEffect _clickError;
+        bool _errorSound;
         
         Task<Tuple<int, Chess.Action>> _computerAITask; 
         #endregion
@@ -63,6 +68,9 @@ namespace HareTortoiseGame.Component
         }
         private void InitAndLoadContent(Game game, BoardData boardData)
         {
+            _click = game.Content.Load<SoundEffect>("misc_menu_4");
+            _clickError = game.Content.Load<SoundEffect>("negative_2");
+
             InitChessButton(game);
             InitGoalButton(game);
             InitChess(game, boardData.Hare, _hare, game.Content.Load<Texture2D>("Rabbit"),
@@ -227,9 +235,12 @@ namespace HareTortoiseGame.Component
         {
             if (TouchControl.IsClick())
             {
+                _errorSound = false;
                 ChessButtonClickMove(nowChess, _goalbutton, _goalChessButtonCount);
                 ChessButtonClickMove(nowChess, _chessbutton, _totalChessButtonCount);
                 ChessClickMove(nowChess);
+
+                if (_errorSound) _clickError.Play();
             }
         }
         private void WaitAnimationDone()
@@ -296,6 +307,8 @@ namespace HareTortoiseGame.Component
             {
                 if (nowChess[i].IsHit() && !nowChess[i].GoalArrived)
                 {
+                    _click.Play();
+                    _errorSound = false;
                     CleanAllChessButtonAnimation(_goalbutton, _goalChessButtonCount);
                     CleanAllChessButtonAnimation(_chessbutton, _totalChessButtonCount);
 
@@ -316,6 +329,8 @@ namespace HareTortoiseGame.Component
             {
                 if (chessButtons[i].IsHit() && chessButtons[i].WantToGo != -1)
                 {
+                    _click.Play();
+                    _errorSound = false;
                     Chess chess = nowChess[chessButtons[i].WantToGo];
                     ChessMove(chess, _chessbutton[chess.Y * Setting.MaxEdgeCount + chess.X],
                         chessButtons[i].WantToGoAction);
@@ -325,6 +340,10 @@ namespace HareTortoiseGame.Component
                     TurnTheTurn();
                     NowState = BoardState.Animation;
                     NoMove = false;
+                }
+                else if (chessButtons[i].IsHit())
+                {
+                    _errorSound = true;
                 }
             }
         }

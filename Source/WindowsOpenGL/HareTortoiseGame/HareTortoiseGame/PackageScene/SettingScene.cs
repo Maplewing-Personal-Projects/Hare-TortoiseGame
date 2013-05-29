@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 using HareTortoiseGame.State;
 using HareTortoiseGame.Component;
 
@@ -13,6 +15,7 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _plyAdd;
         GraphComponent _plyMinus;
         FontComponent _ply;
+        FontComponent _copyRight;
 
         GraphComponent _tortoise;
         GraphComponent _hare;
@@ -22,6 +25,11 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _tortoiseComputer;
 
         GraphComponent _next;
+
+        Song _backgroundSong;
+        SoundEffect _click;
+        SoundEffect _clickError;
+        SoundEffect _start;
 
         Board.Player[] _previousPlayers;
         #endregion
@@ -33,6 +41,13 @@ namespace HareTortoiseGame.PackageScene
                 game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
+            _backgroundSong = game.Content.Load<Song>("EmeraldHillClassic");
+            MediaPlayer.Play(_backgroundSong);
+
+            _click = game.Content.Load<SoundEffect>("misc_menu_4");
+            _clickError = game.Content.Load<SoundEffect>("negative_2");
+            _start = game.Content.Load<SoundEffect>("save");
+
             _settingView = new FontComponent( game, game.Content.Load<SpriteFont>( "font" ),
                 new DrawState(game, new Vector4( 0.05f, 0.05f, 0.0f, 0.0f), Color.White));
             _settingView.AddState(0.5f, new DrawState(game, new Vector4(0.05f, 0.025f, 0.0f, 0.0f), Color.White));
@@ -51,11 +66,14 @@ namespace HareTortoiseGame.PackageScene
                 new DrawState(game, new Vector4(0.1f, 0.28f, 0.0f, 0.0f), Color.White));
             _plyMinus.AddState(0.5f, new DrawState(game, new Vector4(0.1f, 0.28f, 0.0f, 0.0f), Color.White));
             _plyMinus.AddState(0.5f, new DrawState(game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
-            
-            /*_user = new GraphComponent(game, game.Content.Load<Texture2D>("User"),
-                new DrawState(game, new Vector4(0.1f, 0.5f, 0.1f, 0.15f), Color.White));
-            */
-            
+
+            _copyRight = new FontComponent(game, game.Content.Load<SpriteFont>( "font" ),
+                new DrawState(game, new Vector4(0.5f, 0.8f, 0.0f, 0.0f), Color.White));
+            _copyRight.Content = "製作：灆洢（曹又霖）";
+            _copyRight.AddState(0.5f, new DrawState(game, new Vector4(0.5f, 0.8f, 0.0f, 0.0f), Color.White));
+            _copyRight.AddState(0.5f, new DrawState(game, new Vector4(0.25f, 0.9f, 0.5f, 0.0f), Color.White));
+            AddComponent(_copyRight);
+
             _tortoise = new GraphComponent(game, game.Content.Load<Texture2D>("Turtle"),
                 new DrawState(game, new Vector4(0.2f, 0.45f, 0.13f, 0.2f), Color.White));
             _hare = new GraphComponent(game, game.Content.Load<Texture2D>("Rabbit"),
@@ -98,6 +116,7 @@ namespace HareTortoiseGame.PackageScene
 
         public override void Update(GameTime gameTime)
         {
+
             if (_previousPlayers == null)
             {
                 _previousPlayers = new Board.Player[2];
@@ -165,9 +184,11 @@ namespace HareTortoiseGame.PackageScene
                 }
             }
 
-            _ply.Content = "Alpha-Beta最高層數: " + Setting.MaxPly.ToString(); 
+            _ply.Content = "Alpha-Beta最高層數: " + Setting.MaxPly.ToString();
+            if (Setting.MaxPly == 12) _ply.Content += "（建議）";
             if (_plyAdd.IsHit())
             {
+                _click.Play();
                 _plyAdd.ClearAllAndAddState(0.05f,
                     new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.White));
                 _plyAdd.AddState(0.1f,
@@ -178,6 +199,7 @@ namespace HareTortoiseGame.PackageScene
             }
             if (_plyMinus.IsHit() && Setting.MaxPly >= 3)
             {
+                _click.Play();
                 _plyMinus.ClearAllAndAddState(0.05f,
                     new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
                 _plyMinus.AddState(0.1f,
@@ -186,14 +208,20 @@ namespace HareTortoiseGame.PackageScene
                     new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
                 --Setting.MaxPly;
             }
+            else if (_plyMinus.IsHit())
+            {
+                _clickError.Play();
+            }
 
-            if (_tortoiseUser.IsHit()) { Setting.Players[0] = Board.Player.User; }
-            if (_tortoiseComputer.IsHit()) { Setting.Players[0] = Board.Player.Computer; }
-            if (_hareUser.IsHit()) { Setting.Players[1] = Board.Player.User; }
-            if (_hareComputer.IsHit()) { Setting.Players[1] = Board.Player.Computer; }
+            if (_tortoiseUser.IsHit()) { _click.Play(); Setting.Players[0] = Board.Player.User; }
+            if (_tortoiseComputer.IsHit()) { _click.Play(); Setting.Players[0] = Board.Player.Computer; }
+            if (_hareUser.IsHit()) { _click.Play(); Setting.Players[1] = Board.Player.User; }
+            if (_hareComputer.IsHit()) { _click.Play(); Setting.Players[1] = Board.Player.Computer; }
 
             if (_next.IsHit())
             {
+                _start.Play();
+                MediaPlayer.Stop();
                 _next.AddState( 0.2f,
                     new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.Red));
                 NextScene = "Board";

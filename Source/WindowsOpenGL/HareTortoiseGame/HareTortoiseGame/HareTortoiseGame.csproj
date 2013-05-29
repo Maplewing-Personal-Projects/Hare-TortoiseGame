@@ -50,27 +50,27 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Component\BasicComponent.cs" />
     <Compile Include="Component\Board.cs" />
     <Compile Include="Component\Chess.cs" />
     <Compile Include="Component\ChessButton.cs" />
-    <Compile Include="Component\Container.cs" />
-    <Compile Include="Component\FontComponent.cs" />
-    <Compile Include="Component\GraphComponent.cs" />
     <Compile Include="GameLogic\BoardData.cs" />
     <Compile Include="GameLogic\ComputerAI.cs" />
+    <Compile Include="Library\Component\BasicComponent.cs" />
+    <Compile Include="Library\Component\Container.cs" />
+    <Compile Include="Library\Component\FontComponent.cs" />
+    <Compile Include="Library\Component\GraphComponent.cs" />
+    <Compile Include="Library\Manager\SceneManager.cs" />
+    <Compile Include="Library\Manager\StateManager.cs" />
+    <Compile Include="Library\Scene.cs" />
+    <Compile Include="Library\State\DrawState.cs" />
+    <Compile Include="Library\TouchControl.cs" />
     <Compile Include="MainGame.cs" />
-    <Compile Include="Manager\SceneManager.cs" />
-    <Compile Include="Manager\StateManager.cs" />
     <Compile Include="PackageScene\GameBoardScene.cs" />
     <Compile Include="PackageScene\OPScene.cs" />
     <Compile Include="PackageScene\SettingScene.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scene.cs" />
     <Compile Include="Setting.cs" />
-    <Compile Include="State\DrawState.cs" />
-    <Compile Include="TouchControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -91,6 +91,15 @@
   <ItemGroup>
     <Content Include="..\..\..\..\..\..\..\..\..\Program Files %28x86%29\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
       <Link>SDL.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\25.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\EmeraldHillClassic.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SunsetParkModern.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
@@ -133,6 +142,12 @@
     <Content Include="Content\Minus.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\misc_menu_4.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\negative_2.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Next.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -142,13 +157,33 @@
     <Content Include="Content\Rabbit.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\RabbitWin.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\rightarrow.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\save.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Turtle.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\TurtleWin.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\User.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\25.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\EmeraldHillClassic.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SunsetParkModern.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

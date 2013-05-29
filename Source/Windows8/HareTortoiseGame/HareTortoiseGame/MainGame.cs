@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using HareTortoiseGame.Manager;
 
 namespace HareTortoiseGame
@@ -63,6 +65,7 @@ namespace HareTortoiseGame
         {
             // TODO: Add your update logic here
             _sceneManager.PreviousBounds = _graphics.GraphicsDevice.Viewport;
+
             TouchControl.Update(gameTime);
             base.Update(gameTime);
         }
