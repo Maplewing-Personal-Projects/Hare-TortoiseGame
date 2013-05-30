@@ -264,6 +264,7 @@ namespace HareTortoiseGame.Component
             }
             else if (_computerAITask.IsCompleted)
             {
+                _click.Play();
                 ComputerMove(nowChess);
             }
         }

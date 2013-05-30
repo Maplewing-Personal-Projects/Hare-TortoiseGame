@@ -41,8 +41,8 @@ namespace HareTortoiseGame.PackageScene
                 game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
-            _backgroundSong = game.Content.Load<Song>("SunsetParkModern");
-            _victory = game.Content.Load<Song>("25");
+            _backgroundSong = LoadSong.Load(game,"SunsetParkModern");
+            _victory = LoadSong.Load(game,"25");
 
             _start = game.Content.Load<SoundEffect>("save");
             _clickError = game.Content.Load<SoundEffect>("negative_2");

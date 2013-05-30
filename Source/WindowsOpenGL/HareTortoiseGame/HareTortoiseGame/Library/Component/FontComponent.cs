@@ -71,8 +71,22 @@ namespace HareTortoiseGame.Component
 
         public bool IsHit()
         {
-            if ((TouchControl.IsMouseClick() && Bounds().Contains(TouchControl.MousePosition()))
-                || (TouchControl.IsTouchClick() && Bounds().Contains(TouchControl.TouchPosition())))
+            var bounds = Bounds();
+            bounds.Height = (int)(_font.MeasureString(Content).Y * (bounds.Width / _font.MeasureString(Content).X));
+            if ((TouchControl.IsMouseClick() && bounds.Contains(TouchControl.MousePosition()))
+                || (TouchControl.IsTouchClick() && bounds.Contains(TouchControl.TouchPosition())))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public bool IsHover()
+        {
+            var bounds = Bounds();
+            bounds.Height = (int)(_font.MeasureString(Content).Y * (bounds.Width / _font.MeasureString(Content).X));
+            if (bounds.Contains(TouchControl.MousePosition())
+                || bounds.Contains(TouchControl.TouchPosition()))
             {
                 return true;
             }

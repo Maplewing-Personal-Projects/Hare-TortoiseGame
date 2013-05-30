@@ -11,14 +11,15 @@ namespace HareTortoiseGame
     /// </summary>
     public class MainGame : Game
     {
-        GraphicsDeviceManager _graphics;
+        public GraphicsDeviceManager Graphics;
         SpriteBatch _spriteBatch;
         SceneManager _sceneManager;
 
         public MainGame()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            LoadSong.SongInitialize();
         }
 
         /// <summary>
@@ -29,10 +30,10 @@ namespace HareTortoiseGame
         /// </summary>
         protected override void Initialize()
         {
-            MediaPlayer.Volume = 0.3f;
-            SoundEffect.MasterVolume = 1.0f;
+            MediaPlayer.Volume = ((float)Setting.MusicVolume) / 100f;
+            SoundEffect.MasterVolume = ((float)Setting.SoundVolume) / 100f;
             // TODO: Add your initialization logic here
-            _sceneManager = new SceneManager(this, "Setting");
+            _sceneManager = new SceneManager(this, "GameStart");
             _sceneManager.Start();
             base.Initialize();
         }
@@ -65,8 +66,10 @@ namespace HareTortoiseGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            MediaPlayer.Volume = ((float)Setting.MusicVolume) / 100f;
+            SoundEffect.MasterVolume = ((float)Setting.SoundVolume) / 100f;
             // TODO: Add your update logic here
-            _sceneManager.PreviousBounds = _graphics.GraphicsDevice.Viewport;
+            _sceneManager.PreviousBounds = Graphics.GraphicsDevice.Viewport;
             
             TouchControl.Update(gameTime);
             base.Update(gameTime);

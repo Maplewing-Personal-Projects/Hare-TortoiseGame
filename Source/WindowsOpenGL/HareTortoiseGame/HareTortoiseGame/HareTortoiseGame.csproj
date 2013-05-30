@@ -59,20 +59,28 @@
     <Compile Include="Library\Component\Container.cs" />
     <Compile Include="Library\Component\FontComponent.cs" />
     <Compile Include="Library\Component\GraphComponent.cs" />
+    <Compile Include="Library\LoadSong.cs" />
     <Compile Include="Library\Manager\SceneManager.cs" />
     <Compile Include="Library\Manager\StateManager.cs" />
     <Compile Include="Library\Scene.cs" />
     <Compile Include="Library\State\DrawState.cs" />
     <Compile Include="Library\TouchControl.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="PackageScene\DisplaySoundSetting.cs" />
     <Compile Include="PackageScene\GameBoardScene.cs" />
-    <Compile Include="PackageScene\OPScene.cs" />
+    <Compile Include="PackageScene\GameStartMenu.cs" />
     <Compile Include="PackageScene\SettingScene.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="NAudio">
+      <HintPath>..\..\..\..\..\..\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.WindowsMediaFormat">
+      <HintPath>..\..\..\..\..\..\NAudio.WindowsMediaFormat.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK">
       <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\OpenTK.dll</HintPath>
     </Reference>
@@ -93,13 +101,13 @@
       <Link>SDL.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\25.wav">
+    <Content Include="Content\25.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\EmeraldHillClassic.wav">
+    <Content Include="Content\EmeraldHillClassic.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\SunsetParkModern.wav">
+    <Content Include="Content\SunsetParkModern.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
@@ -184,6 +192,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\SunsetParkModern.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\logo.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Check.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

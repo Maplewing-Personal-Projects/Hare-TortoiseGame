@@ -75,6 +75,16 @@ namespace HareTortoiseGame.Component
             else return false;
         }
 
+        public bool IsHover()
+        {
+            if (Bounds().Contains(TouchControl.MousePosition())
+                || Bounds().Contains(TouchControl.TouchPosition()))
+            {
+                return true;
+            }
+            else return false;
+        }
+
         public void AddState(float second, DrawState drawState)
         {
             _state.AddState(second, drawState);

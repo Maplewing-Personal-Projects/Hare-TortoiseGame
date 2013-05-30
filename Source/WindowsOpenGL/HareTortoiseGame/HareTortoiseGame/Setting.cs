@@ -10,6 +10,8 @@ namespace HareTortoiseGame
         static int _maxPlyOrSecond = 12;
         static Board.Player[] _players = { Board.Player.User, Board.Player.Computer };
         static int _maxEdgeCount = 4;
+        static int _soundVolume = 100;
+        static int _musicVolume = 30;
         #endregion
 
         #region Property
@@ -47,6 +49,8 @@ namespace HareTortoiseGame
                 }
             } 
         }
+        public static int SoundVolume { get { return _soundVolume; } set { _soundVolume = value; } }
+        public static int MusicVolume { get { return _musicVolume; } set { _musicVolume = value; } }
         #endregion
 
         #region Constructor

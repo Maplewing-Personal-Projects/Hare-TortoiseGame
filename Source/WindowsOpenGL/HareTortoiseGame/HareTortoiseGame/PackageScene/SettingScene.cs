@@ -15,7 +15,6 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _plyAdd;
         GraphComponent _plyMinus;
         FontComponent _ply;
-        FontComponent _copyRight;
 
         GraphComponent _tortoise;
         GraphComponent _hare;
@@ -25,6 +24,7 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _tortoiseComputer;
 
         GraphComponent _next;
+        GraphComponent _back;
 
         Song _backgroundSong;
         SoundEffect _click;
@@ -41,8 +41,10 @@ namespace HareTortoiseGame.PackageScene
                 game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
-            _backgroundSong = game.Content.Load<Song>("EmeraldHillClassic");
-            MediaPlayer.Play(_backgroundSong);
+            _backgroundSong = LoadSong.Load(game,"EmeraldHillClassic");
+            if (MediaPlayer.Queue.ActiveSong != _backgroundSong ||
+                MediaPlayer.State == MediaState.Stopped)
+                MediaPlayer.Play(_backgroundSong);
 
             _click = game.Content.Load<SoundEffect>("misc_menu_4");
             _clickError = game.Content.Load<SoundEffect>("negative_2");
@@ -51,8 +53,8 @@ namespace HareTortoiseGame.PackageScene
             _settingView = new FontComponent( game, game.Content.Load<SpriteFont>( "font" ),
                 new DrawState(game, new Vector4( 0.05f, 0.05f, 0.0f, 0.0f), Color.White));
             _settingView.AddState(0.5f, new DrawState(game, new Vector4(0.05f, 0.025f, 0.0f, 0.0f), Color.White));
-            _settingView.AddState(0.5f, new DrawState(game, new Vector4(0.05f, 0.05f, 0.5f, 0.0f), Color.White));
-            _settingView.Content = "龜兔賽跑棋：設定";
+            _settingView.AddState(0.5f, new DrawState(game, new Vector4(0.05f, 0.05f, 0.2f, 0.0f), Color.White));
+            _settingView.Content = "開始設定";
             _ply = new FontComponent( game, game.Content.Load<SpriteFont>( "font" ),
                 new DrawState(game, new Vector4(0.35f, 0.15f, 0.0f, 0.0f), Color.White));
             _ply.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.15f, 0.0f, 0.0f), Color.White));
@@ -66,13 +68,6 @@ namespace HareTortoiseGame.PackageScene
                 new DrawState(game, new Vector4(0.1f, 0.28f, 0.0f, 0.0f), Color.White));
             _plyMinus.AddState(0.5f, new DrawState(game, new Vector4(0.1f, 0.28f, 0.0f, 0.0f), Color.White));
             _plyMinus.AddState(0.5f, new DrawState(game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
-
-            _copyRight = new FontComponent(game, game.Content.Load<SpriteFont>( "font" ),
-                new DrawState(game, new Vector4(0.5f, 0.8f, 0.0f, 0.0f), Color.White));
-            _copyRight.Content = "製作：灆洢（曹又霖）";
-            _copyRight.AddState(0.5f, new DrawState(game, new Vector4(0.5f, 0.8f, 0.0f, 0.0f), Color.White));
-            _copyRight.AddState(0.5f, new DrawState(game, new Vector4(0.25f, 0.9f, 0.5f, 0.0f), Color.White));
-            AddComponent(_copyRight);
 
             _tortoise = new GraphComponent(game, game.Content.Load<Texture2D>("Turtle"),
                 new DrawState(game, new Vector4(0.2f, 0.45f, 0.13f, 0.2f), Color.White));
@@ -90,6 +85,8 @@ namespace HareTortoiseGame.PackageScene
 
             _next = new GraphComponent(game, game.Content.Load<Texture2D>("Next"),
                 new DrawState(game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.White));
+            _back = new GraphComponent(game, game.Content.Load<Texture2D>("Previous"),
+                new DrawState(game, new Vector4(0.68f, 0.05f, 0.13f, 0.2f), Color.White));
 
             AddComponent(_settingView);
             AddComponent(_ply);
@@ -102,6 +99,7 @@ namespace HareTortoiseGame.PackageScene
             AddComponent(_hareUser);
             AddComponent(_hareComputer);
             AddComponent(_next);
+            AddComponent(_back);
         }
 
         #endregion
@@ -225,6 +223,14 @@ namespace HareTortoiseGame.PackageScene
                 _next.AddState( 0.2f,
                     new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.Red));
                 NextScene = "Board";
+            }
+
+            if (_back.IsHit())
+            {
+                _start.Play();
+                _back.AddState(0.2f,
+                    new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.Red));
+                NextScene = "GameStart";
             }
 
             base.Update(gameTime);
