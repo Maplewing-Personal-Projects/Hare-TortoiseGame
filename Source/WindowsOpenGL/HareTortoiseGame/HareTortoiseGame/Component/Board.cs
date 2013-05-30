@@ -27,6 +27,9 @@ namespace HareTortoiseGame.Component
         Chess[] _tortoise;
         Player[] _players;
 
+        bool[] _chessbuttonHover;
+        bool[] _goalbuttonHover;
+
         SoundEffect _click;
         SoundEffect _clickError;
         bool _errorSound;
@@ -63,6 +66,8 @@ namespace HareTortoiseGame.Component
 
             _chessbutton = new ChessButton[_totalChessButtonCount];
             _goalbutton = new ChessButton[_goalChessButtonCount];
+            _chessbuttonHover = new bool[_totalChessButtonCount];
+            _goalbuttonHover = new bool[_goalChessButtonCount];
             _hare = new Chess[Setting.MaxEdgeCount - 1];
             _tortoise = new Chess[Setting.MaxEdgeCount - 1];
         }
@@ -150,6 +155,9 @@ namespace HareTortoiseGame.Component
                     WaitComputerMove(nowChess);
                 break;
             }
+
+            ChessButtonHoverAnimation(_goalbutton, _goalbuttonHover, _goalChessButtonCount);
+            ChessButtonHoverAnimation(_chessbutton, _chessbuttonHover, _totalChessButtonCount);
         }
 
         public bool CheckVictory()
@@ -245,6 +253,11 @@ namespace HareTortoiseGame.Component
         }
         private void WaitAnimationDone()
         {
+            if (TouchControl.IsClick())
+            {
+                _clickError.Play();
+            }
+
             bool isAnimationFinish = GetAllChessAnimationFinish();
             if (isAnimationFinish)
             {
@@ -258,6 +271,11 @@ namespace HareTortoiseGame.Component
         }
         private void WaitComputerMove(Chess[] nowChess)
         {
+            if (TouchControl.IsClick())
+            {
+                _clickError.Play();
+            }
+
             if (_computerAITask == null)
             {
                 ComputerStartToCompute();
@@ -301,7 +319,36 @@ namespace HareTortoiseGame.Component
             }
             return isAnimationFinish;
         }
-        
+
+        private void ChessButtonHoverAnimation(ChessButton[] chessButtons, 
+            bool[] chessButtonHover, int totalButtonCount)
+        {
+            for (int i = 0; i < totalButtonCount; ++i)
+            {
+                if (chessButtons[i].IsHover() && !chessButtonHover[i])
+                {
+                    chessButtonHover[i] = true;
+                    chessButtons[i].ClearAllAndAddState(0.2f,
+                        new DrawState(Game,
+                            chessButtons[i].State.CurrentState.Bounds,
+                                new Color( chessButtons[i].State.LastState.Color.R + 50,
+                                    chessButtons[i].State.LastState.Color.G + 50,
+                                    chessButtons[i].State.LastState.Color.B + 50,
+                                    chessButtons[i].State.LastState.Color.A)));
+
+                }
+                else if (!chessButtons[i].IsHover() && chessButtonHover[i])
+                {
+                    chessButtonHover[i] = false;
+                    chessButtons[i].ClearAllAndAddState(0.2f,
+                        new DrawState(Game, chessButtons[i].State.CurrentState.Bounds,
+                            new Color(chessButtons[i].State.LastState.Color.R - 50,
+                                    chessButtons[i].State.LastState.Color.G - 50,
+                                    chessButtons[i].State.LastState.Color.B - 50,
+                                    chessButtons[i].State.LastState.Color.A)));
+                }
+            }
+        }
         private void ChessClickMove(Chess[] nowChess)
         {
             for (int i = 0; i < Setting.MaxEdgeCount - 1; i++)
@@ -310,14 +357,13 @@ namespace HareTortoiseGame.Component
                 {
                     _click.Play();
                     _errorSound = false;
-                    CleanAllChessButtonAnimation(_goalbutton, _goalChessButtonCount);
-                    CleanAllChessButtonAnimation(_chessbutton, _totalChessButtonCount);
+                    CleanAllChessButtonAnimation(_goalbutton, _goalbuttonHover, _goalChessButtonCount);
+                    CleanAllChessButtonAnimation(_chessbutton, _chessbuttonHover, _totalChessButtonCount);
 
                     _chessbutton[nowChess[i].Y * Setting.MaxEdgeCount + nowChess[i].X].ClearAllAndAddState(0.5f,
                         new DrawState(Game,
                             _chessbutton[nowChess[i].Y * Setting.MaxEdgeCount + nowChess[i].X].State.CurrentState.Bounds,
                             Color.PowderBlue));
-
                     UpdatePossibleMoveButton(i, _chessbutton, nowChess[i].GetAllPossibleMove());
                     UpdatePossibleMoveButton(i, _goalbutton, nowChess[i].GetAllGoalMove());
                 }
@@ -335,8 +381,8 @@ namespace HareTortoiseGame.Component
                     Chess chess = nowChess[chessButtons[i].WantToGo];
                     ChessMove(chess, _chessbutton[chess.Y * Setting.MaxEdgeCount + chess.X],
                         chessButtons[i].WantToGoAction);
-                    CleanAllChessButtonAnimation(_goalbutton, _goalChessButtonCount);
-                    CleanAllChessButtonAnimation(_chessbutton, _totalChessButtonCount);
+                    CleanAllChessButtonAnimation(_goalbutton, _goalbuttonHover, _goalChessButtonCount);
+                    CleanAllChessButtonAnimation(_chessbutton, _chessbuttonHover, _totalChessButtonCount);
 
                     TurnTheTurn();
                     NowState = BoardState.Animation;
@@ -376,7 +422,7 @@ namespace HareTortoiseGame.Component
             if (!moveChess.GoalArrived)
                 _chessbutton[moveChess.Y * Setting.MaxEdgeCount + moveChess.X].HaveChess = true;
         }
-        private void CleanAllChessButtonAnimation(ChessButton[] chessButton, int chessButtonCount)
+        private void CleanAllChessButtonAnimation(ChessButton[] chessButton, bool[] chessButtonHover, int chessButtonCount)
         {
             for (int i = 0; i < chessButtonCount; ++i)
             {
@@ -384,6 +430,7 @@ namespace HareTortoiseGame.Component
                         new DrawState(Game, chessButton[i].State.CurrentState.Bounds,
                         new Color(0.0f, 0.0f, 0.0f, 0.5f)));
                 chessButton[i].WantToGo = -1;
+                chessButtonHover[i] = false;
             }
         }
         private void TurnTheTurn()

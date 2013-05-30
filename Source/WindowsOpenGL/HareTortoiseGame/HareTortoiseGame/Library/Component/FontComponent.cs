@@ -63,7 +63,8 @@ namespace HareTortoiseGame.Component
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_font, Content, new Vector2(bounds.X, bounds.Y),
                 _state.CurrentState.Color, _state.CurrentState.RotateAngle, Vector2.Zero,
-                bounds.Width/_font.MeasureString(Content).X , _state.CurrentState.SpriteEffects,
+                MathHelper.Max(bounds.Width/_font.MeasureString(Content).X,
+                bounds.Height / _font.MeasureString(Content).Y), _state.CurrentState.SpriteEffects,
                 _state.CurrentState.Depth);
             _spriteBatch.End();
             base.Draw(gameTime);
@@ -72,7 +73,12 @@ namespace HareTortoiseGame.Component
         public bool IsHit()
         {
             var bounds = Bounds();
-            bounds.Height = (int)(_font.MeasureString(Content).Y * (bounds.Width / _font.MeasureString(Content).X));
+            bounds.Width = (int)(_font.MeasureString(Content).X *
+                MathHelper.Max(bounds.Width / _font.MeasureString(Content).X,
+                bounds.Height / _font.MeasureString(Content).Y));
+            bounds.Height = (int)(_font.MeasureString(Content).Y * 
+                MathHelper.Max(bounds.Width / _font.MeasureString(Content).X,
+                bounds.Height / _font.MeasureString(Content).Y));
             if ((TouchControl.IsMouseClick() && bounds.Contains(TouchControl.MousePosition()))
                 || (TouchControl.IsTouchClick() && bounds.Contains(TouchControl.TouchPosition())))
             {
@@ -84,7 +90,12 @@ namespace HareTortoiseGame.Component
         public bool IsHover()
         {
             var bounds = Bounds();
-            bounds.Height = (int)(_font.MeasureString(Content).Y * (bounds.Width / _font.MeasureString(Content).X));
+            bounds.Width = (int)(_font.MeasureString(Content).X *
+                MathHelper.Max(bounds.Width / _font.MeasureString(Content).X,
+                bounds.Height / _font.MeasureString(Content).Y));
+            bounds.Height = (int)(_font.MeasureString(Content).Y *
+                MathHelper.Max(bounds.Width / _font.MeasureString(Content).X,
+                bounds.Height / _font.MeasureString(Content).Y));
             if (bounds.Contains(TouchControl.MousePosition())
                 || bounds.Contains(TouchControl.TouchPosition()))
             {

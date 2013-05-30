@@ -30,6 +30,9 @@ namespace HareTortoiseGame.Manager
             Scene scene = null;
             switch (sceneName)
             {
+                case "OP":
+                    scene = new OPScene(Game);
+                    break;
                 case "GameStart":
                     scene = new GameStartMenu(Game);
                     break;

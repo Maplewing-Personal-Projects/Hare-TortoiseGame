@@ -32,6 +32,16 @@ namespace HareTortoiseGame.PackageScene
         SoundEffect _start;
 
         Board.Player[] _previousPlayers;
+
+        bool _plyAddHover;
+        bool _plyMinusHover;
+        bool _tortoiseUserHover;
+        bool _tortoiseComputerHover;
+        bool _hareUserHover;
+        bool _hareComputerHover;
+        bool _nextHover;
+        bool _backHover;
+
         #endregion
 
         #region Constructor
@@ -46,6 +56,13 @@ namespace HareTortoiseGame.PackageScene
                 MediaPlayer.State == MediaState.Stopped)
                 MediaPlayer.Play(_backgroundSong);
 
+            _plyAddHover = false;
+            _plyMinusHover = false;
+            _tortoiseUserHover = false;
+            _tortoiseComputerHover = false;
+            _hareUserHover = false;
+            _hareComputerHover = false;
+
             _click = game.Content.Load<SoundEffect>("misc_menu_4");
             _clickError = game.Content.Load<SoundEffect>("negative_2");
             _start = game.Content.Load<SoundEffect>("save");
@@ -56,9 +73,9 @@ namespace HareTortoiseGame.PackageScene
             _settingView.AddState(0.5f, new DrawState(game, new Vector4(0.05f, 0.05f, 0.2f, 0.0f), Color.White));
             _settingView.Content = "開始設定";
             _ply = new FontComponent( game, game.Content.Load<SpriteFont>( "font" ),
-                new DrawState(game, new Vector4(0.35f, 0.15f, 0.0f, 0.0f), Color.White));
-            _ply.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.15f, 0.0f, 0.0f), Color.White));
-            _ply.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.3f, 0.3f, 0.0f), Color.White));
+                new DrawState(game, new Vector4(0.25f, 0.15f, 0.0f, 0.0f), Color.White));
+            _ply.AddState(0.5f, new DrawState(game, new Vector4(0.25f, 0.15f, 0.0f, 0.0f), Color.White));
+            _ply.AddState(0.5f, new DrawState(game, new Vector4(0.25f, 0.3f, 0.3f, 0.05f), Color.White));
             _ply.Content = "Alpha-Beta最高層數: " + Setting.MaxPly.ToString();
             _plyAdd = new GraphComponent(game, game.Content.Load<Texture2D>("Add"),
                 new DrawState(game, new Vector4(0.8f, 0.28f, 0.0f, 0.0f), Color.White));
@@ -183,24 +200,36 @@ namespace HareTortoiseGame.PackageScene
             }
 
             _ply.Content = "Alpha-Beta最高層數: " + Setting.MaxPly.ToString();
-            if (Setting.MaxPly == 12) _ply.Content += "（建議）";
+            if (Setting.MaxPly == 12) _ply.Content += "（兔子建議）";
+            if (Setting.MaxPly == 16) _ply.Content += "（烏龜建議）";
             if (_plyAdd.IsHit())
             {
+                _plyAddHover = false;
                 _click.Play();
-                _plyAdd.ClearAllAndAddState(0.05f,
-                    new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.White));
-                _plyAdd.AddState(0.1f,
+                _plyAdd.ClearAllAndAddState(0.1f,
                     new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.Red));
                 _plyAdd.AddState(0.1f,
                     new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.White));
                 ++Setting.MaxPly;
             }
+            else if (_plyAdd.IsHover() && !_plyAddHover && _plyAdd.IsFinish() )
+            {
+                _plyAddHover = true;
+                _plyAdd.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.PowderBlue));
+            }
+            else if (!_plyAdd.IsHover() && _plyAddHover && _plyAdd.IsFinish())
+            {
+                _plyAddHover = false;
+                _plyAdd.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.8f, 0.28f, 0.1f, 0.1f), Color.White));
+            }
+
             if (_plyMinus.IsHit() && Setting.MaxPly >= 3)
             {
+                _plyMinusHover = false;
                 _click.Play();
-                _plyMinus.ClearAllAndAddState(0.05f,
-                    new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
-                _plyMinus.AddState(0.1f,
+                _plyMinus.ClearAllAndAddState(0.1f,
                     new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.Red));
                 _plyMinus.AddState(0.1f,
                     new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
@@ -210,27 +239,130 @@ namespace HareTortoiseGame.PackageScene
             {
                 _clickError.Play();
             }
+            else if (_plyMinus.IsHover() && !_plyMinusHover && _plyMinus.IsFinish())
+            {
+                _plyMinusHover = true;
+                _plyMinus.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.PowderBlue));
+            }
+            else if (!_plyMinus.IsHover() && _plyMinusHover && _plyMinus.IsFinish())
+            {
+                _plyMinusHover = false;
+                _plyMinus.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.1f, 0.28f, 0.1f, 0.1f), Color.White));
+            }
 
-            if (_tortoiseUser.IsHit()) { _click.Play(); Setting.Players[0] = Board.Player.User; }
-            if (_tortoiseComputer.IsHit()) { _click.Play(); Setting.Players[0] = Board.Player.Computer; }
-            if (_hareUser.IsHit()) { _click.Play(); Setting.Players[1] = Board.Player.User; }
-            if (_hareComputer.IsHit()) { _click.Play(); Setting.Players[1] = Board.Player.Computer; }
+            if (_tortoiseUser.IsHit())
+            {
+                _tortoiseUserHover = false;
+                _click.Play();
+                Setting.Players[0] = Board.Player.User;
+            }
+            else if (_tortoiseUser.IsHover() && !_tortoiseUserHover && Setting.Players[0] != Board.Player.User)
+            {
+                _tortoiseUserHover = true;
+                _tortoiseUser.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.5f, 0.45f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_tortoiseUser.IsHover() && _tortoiseUserHover && Setting.Players[0] != Board.Player.User)
+            {
+                _tortoiseUserHover = false;
+                _tortoiseUser.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.5f, 0.45f, 0.13f, 0.2f), Color.White));
+            }
+
+            if (_tortoiseComputer.IsHit()) {
+                _tortoiseComputerHover = false;
+                _click.Play(); 
+                Setting.Players[0] = Board.Player.Computer;
+            }
+            else if (_tortoiseComputer.IsHover() && !_tortoiseComputerHover && Setting.Players[0] != Board.Player.Computer)
+            {
+                _tortoiseComputerHover = true;
+                _tortoiseComputer.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.7f, 0.45f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_tortoiseComputer.IsHover() && _tortoiseComputerHover && Setting.Players[0] != Board.Player.Computer)
+            {
+                _tortoiseComputerHover = false;
+                _tortoiseComputer.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.7f, 0.45f, 0.13f, 0.2f), Color.White));
+            }
+
+            if (_hareUser.IsHit()) {
+                _hareUserHover = false;
+                _click.Play(); 
+                Setting.Players[1] = Board.Player.User; 
+            }
+            else if (_hareUser.IsHover() && !_hareUserHover && Setting.Players[1] != Board.Player.User)
+            {
+                _hareUserHover = true;
+                _hareUser.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.5f, 0.65f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_hareUser.IsHover() && _hareUserHover && Setting.Players[1] != Board.Player.User)
+            {
+                _hareUserHover = false;
+                _hareUser.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.5f, 0.65f, 0.13f, 0.2f), Color.White));
+            }
+
+            if (_hareComputer.IsHit()) 
+            {
+                _hareComputerHover = false;
+                _click.Play();
+                Setting.Players[1] = Board.Player.Computer; 
+            }
+            else if (_hareComputer.IsHover() && !_hareComputerHover && Setting.Players[1] != Board.Player.Computer)
+            {
+                _hareComputerHover = true;
+                _hareComputer.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.7f, 0.65f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_hareComputer.IsHover() && _hareComputerHover && Setting.Players[1] != Board.Player.Computer)
+            {
+                _hareComputerHover = false;
+                _hareComputer.ClearAllAndAddState(0.2f,
+                        new DrawState(Game, new Vector4(0.7f, 0.65f, 0.13f, 0.2f), Color.White));
+            }
 
             if (_next.IsHit())
             {
+                _nextHover = false;
                 _start.Play();
                 MediaPlayer.Stop();
-                _next.AddState( 0.2f,
-                    new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.Red));
                 NextScene = "Board";
             }
+            else if (_next.IsHover() && !_nextHover)
+            {
+                _nextHover = true;
+                _next.AddState(0.2f,
+                    new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_next.IsHover() && _nextHover)
+            {
+                _nextHover = false;
+                _next.AddState(0.2f,
+                    new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.White));
+            }
+            
 
             if (_back.IsHit())
             {
                 _start.Play();
-                _back.AddState(0.2f,
-                    new DrawState(Game, new Vector4(0.83f, 0.05f, 0.13f, 0.2f), Color.Red));
                 NextScene = "GameStart";
+            }
+            else if (_back.IsHover() && !_backHover)
+            {
+                _backHover = true;
+                _back.AddState(0.2f,
+                    new DrawState(Game, new Vector4(0.68f, 0.05f, 0.13f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_back.IsHover() && _backHover)
+            {
+                _backHover = false;
+                _back.AddState(0.2f,
+                    new DrawState(Game, new Vector4(0.68f, 0.05f, 0.13f, 0.2f), Color.White));
             }
 
             base.Update(gameTime);

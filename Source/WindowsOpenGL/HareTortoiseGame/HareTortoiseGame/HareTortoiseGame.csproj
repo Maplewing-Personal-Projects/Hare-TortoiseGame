@@ -70,6 +70,7 @@
     <Compile Include="PackageScene\GameBoardScene.cs" />
     <Compile Include="PackageScene\GameStartMenu.cs" />
     <Compile Include="PackageScene\SettingScene.cs" />
+    <Compile Include="PackageScene\OPScene.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting.cs" />

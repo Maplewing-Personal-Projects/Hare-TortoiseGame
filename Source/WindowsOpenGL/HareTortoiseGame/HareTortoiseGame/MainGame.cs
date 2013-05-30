@@ -19,7 +19,6 @@ namespace HareTortoiseGame
         {
             Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            LoadSong.SongInitialize();
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace HareTortoiseGame
             MediaPlayer.Volume = ((float)Setting.MusicVolume) / 100f;
             SoundEffect.MasterVolume = ((float)Setting.SoundVolume) / 100f;
             // TODO: Add your initialization logic here
-            _sceneManager = new SceneManager(this, "GameStart");
+            _sceneManager = new SceneManager(this, "OP");
             _sceneManager.Start();
             base.Initialize();
         }

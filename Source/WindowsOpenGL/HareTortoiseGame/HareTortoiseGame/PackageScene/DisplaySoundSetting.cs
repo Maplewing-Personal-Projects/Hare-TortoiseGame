@@ -26,7 +26,6 @@ namespace HareTortoiseGame.PackageScene
         SoundEffect _click;
         SoundEffect _clickError;
         SoundEffect _start;
-        bool _previousFullScreen;
         #endregion
 
         #region Constructor
@@ -41,8 +40,6 @@ namespace HareTortoiseGame.PackageScene
                 MediaPlayer.State == MediaState.Stopped)
                 MediaPlayer.Play(_backgroundSong);
 
-
-            _previousFullScreen = ((MainGame)game).Graphics.IsFullScreen;
             _click = game.Content.Load<SoundEffect>("misc_menu_4");
             _clickError = game.Content.Load<SoundEffect>("negative_2");
             _start = game.Content.Load<SoundEffect>("save");

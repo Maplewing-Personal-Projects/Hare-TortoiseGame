@@ -11,10 +11,11 @@ namespace HareTortoiseGame
 {
     public static class LoadSong
     {
+        public static string[] Songlist = { "25", "EmeraldHillClassic", "SunsetParkModern" };
+
         public static void SongInitialize()
         {
-            string[] songlist = { "25", "EmeraldHillClassic", "SunsetParkModern" };
-            foreach (var song in songlist)
+            foreach (var song in Songlist)
             {
                 if (!File.Exists(@"Content/" + song + ".wav"))
                 {

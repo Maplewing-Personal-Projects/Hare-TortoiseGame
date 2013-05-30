@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Media;
 using HareTortoiseGame.Component;
 using HareTortoiseGame.GameLogic;
 
@@ -54,6 +57,18 @@ namespace HareTortoiseGame
         #endregion
 
         #region Constructor
+        #endregion
+
+        #region Method
+
+        public static void LoadMusic(Game game)
+        {
+            LoadSong.SongInitialize();
+            foreach (var song in LoadSong.Songlist)
+            {
+                game.Content.Load<Song>(song);
+            }
+        }
         #endregion
     }
 }

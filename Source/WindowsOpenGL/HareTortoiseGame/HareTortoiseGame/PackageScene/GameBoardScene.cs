@@ -21,6 +21,8 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _rightArrow;
         GraphComponent _back;
 
+        bool _backHover;
+
         GraphComponent _hareWin;
         GraphComponent _tortoiseWin;
 
@@ -43,6 +45,8 @@ namespace HareTortoiseGame.PackageScene
         {
             _backgroundSong = LoadSong.Load(game,"SunsetParkModern");
             _victory = LoadSong.Load(game,"25");
+
+            _backHover = false;
 
             _start = game.Content.Load<SoundEffect>("save");
             _clickError = game.Content.Load<SoundEffect>("negative_2");
@@ -122,11 +126,22 @@ namespace HareTortoiseGame.PackageScene
 
             if (_back.IsHit())
             {
+                _backHover = false;
                 _start.Play();
                 MediaPlayer.Stop();
-                _back.ClearAllAndAddState(0.2f,
-                    new DrawState(Game, new Vector4(0.3f, 0.75f, 0.4f, 0.2f), Color.Red));
                 NextScene = "Setting";
+            }
+            else if (_back.IsHover() && !_backHover)
+            {
+                _backHover = true;
+                _back.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.3f, 0.75f, 0.4f, 0.2f), Color.PowderBlue));
+            }
+            else if (!_back.IsHover() && _backHover)
+            {
+                _backHover = false;
+                _back.ClearAllAndAddState(0.2f,
+                    new DrawState(Game, new Vector4(0.3f, 0.75f, 0.4f, 0.2f), Color.White));
             }
 
             if (_board.NowState == Board.BoardState.WaitIO)
