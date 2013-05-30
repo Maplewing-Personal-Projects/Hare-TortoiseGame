@@ -1,4 +1,12 @@
-﻿using System;
+﻿// 人工智慧作業三 龜兔賽跑程式之研發                
+// 資工系103級 499470098 曹又霖
+// 使用方法：                                       
+// 使用Visual Studio 2012並灌入MonoGame後即可打開並編譯。
+// 執行方法：
+// 需先灌入.NET Framework 4 和 OpenAL 後，即可打開。
+// 信箱：sinmaplewing@gmail.com
+
+using System;
 using System.IO;
 using System.Collections.Generic;
 using HareTortoiseGame.Component;
@@ -93,6 +101,7 @@ namespace HareTortoiseGame.GameLogic
             ++_ply;
             return value;
         }
+
         private int? TestMove(Board.Turn turn, ref int alpha, 
             int beta, ref int bestValue, bool top, 
             ref ulong allMove, Chess.Action action)
