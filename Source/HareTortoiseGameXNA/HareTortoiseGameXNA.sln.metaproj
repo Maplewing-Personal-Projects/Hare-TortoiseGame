@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="ValidateSolutionConfiguration;ValidateToolsVersions;ValidateProjects" DefaultTargets="Build">
+  <PropertyGroup>
+    <SDK35ToolsPath>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\</SDK35ToolsPath>
+    <MSBuildToolsPath32>C:\Windows\Microsoft.NET\Framework\v4.0.30319\</MSBuildToolsPath32>
+    <MSBuildToolsRoot>C:\Windows\Microsoft.NET\Framework\</MSBuildToolsRoot>
+    <FrameworkSDKRoot>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\</FrameworkSDKRoot>
+    <MSBuildRuntimeVersion>4.0.30319</MSBuildRuntimeVersion>
+    <SDK40ToolsPath>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\</SDK40ToolsPath>
+    <VisualStudioVersion>10.0</VisualStudioVersion>
+    <Configuration>Debug</Configuration>
+    <Platform>x86</Platform>
+    <AspNetConfiguration>Debug</AspNetConfiguration>
+    <SolutionDir>C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\</SolutionDir>
+    <SolutionExt>.sln</SolutionExt>
+    <SolutionFileName>HareTortoiseGameXNA.sln</SolutionFileName>
+    <SolutionName>HareTortoiseGameXNA</SolutionName>
+    <SolutionPath>C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA.sln</SolutionPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <CurrentSolutionConfigurationContents>
+      <SolutionConfiguration xmlns="">
+  <ProjectConfiguration Project="{9648F7D8-6324-4001-BEFA-DF5F298629E0}" AbsolutePath="C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj" BuildProjectInSolution="True">Release|x86</ProjectConfiguration>
+  <ProjectConfiguration Project="{5F082F92-1ECB-4488-8578-58CF2900BE36}" AbsolutePath="C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNAContent\HareTortoiseGameXNAContent.contentproj" BuildProjectInSolution="False">Debug|x86</ProjectConfiguration>
+</SolutionConfiguration>
+    </CurrentSolutionConfigurationContents>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj">
+      <ToolsVersion>
+      </ToolsVersion>
+      <SkipNonexistentProjects>False</SkipNonexistentProjects>
+      <AdditionalProperties>Configuration=Release; Platform=x86; VisualStudioVersion=10.0</AdditionalProperties>
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="ValidateSolutionConfiguration">
+    <Error Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' != 'true')" Text="指定的方案組態 &quot;$(Configuration)|$(Platform)&quot; 無效。請使用組態和平台屬性指定有效的方案組態 (例如 MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;)，或空下這些屬性，使用預設方案組態。" Code="MSB4126" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" />
+    <Warning Condition="('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' == 'true')" Text="指定的方案組態 &quot;$(Configuration)|$(Platform)&quot; 無效。請使用組態和平台屬性指定有效的方案組態 (例如 MSBuild.exe Solution.sln /p:Configuration=Debug /p:Platform=&quot;Any CPU&quot;)，或空下這些屬性，使用預設方案組態。" Code="MSB4126" HelpKeyword="MSBuild.SolutionInvalidSolutionConfiguration" />
+    <Message Condition="'$(CurrentSolutionConfigurationContents)' != ''" Text="建置方案組態 &quot;$(Configuration)|$(Platform)&quot;。" />
+  </Target>
+  <Target Name="ValidateToolsVersions">
+    <Error Condition="'$(MSBuildToolsVersion)' == '2.0' and ('$(ProjectToolsVersion)' != '2.0' and '$(ProjectToolsVersion)' != '')" Text="此方案的工具版本 &quot;$(MSBuildToolsVersion)&quot; 不支援以另一個工具版本建置專案。" Code="MSB4149" HelpKeyword="MSBuild.SolutionToolsVersionDoesNotSupportProjectToolsVersion" />
+  </Target>
+  <Target Name="ValidateProjects">
+    <Message Condition=" ('$(Configuration)' == 'Debug') and ('$(Platform)' == 'x86') " Text="在方案組態 &quot;Debug|x86&quot; 中未選取要進行建置的專案 &quot;HareTortoiseGameXNAContent&quot;。" />
+    <Message Condition=" ('$(Configuration)' == 'Release') and ('$(Platform)' == 'x86') " Text="在方案組態 &quot;Release|x86&quot; 中未選取要進行建置的專案 &quot;HareTortoiseGameXNAContent&quot;。" />
+  </Target>
+  <Target Name="Build" Outputs="@(CollectedBuildOutput)">
+    <MSBuild Projects="@(ProjectReference)" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Clean">
+    <MSBuild Projects="@(ProjectReference-&gt;Reverse())" Targets="Clean" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)" />
+  </Target>
+  <Target Name="Rebuild" Outputs="@(CollectedBuildOutput)">
+    <MSBuild Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)">
+      <Output TaskParameter="TargetOutputs" ItemName="CollectedBuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="Publish">
+    <MSBuild Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" Properties="BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" SkipNonexistentProjects="%(ProjectReference.SkipNonexistentProjects)" />
+  </Target>
+  <Target Name="HareTortoiseGameXNA" Outputs="@(HareTortoiseGameXNABuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj'" Projects="@(ProjectReference)" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Release; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="HareTortoiseGameXNABuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="HareTortoiseGameXNA:Clean">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj'" Projects="@(ProjectReference)" Targets="Clean" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Release; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+  <Target Name="HareTortoiseGameXNA:Rebuild" Outputs="@(HareTortoiseGameXNABuildOutput)">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj'" Projects="@(ProjectReference)" Targets="Rebuild" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Release; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)">
+      <Output TaskParameter="TargetOutputs" ItemName="HareTortoiseGameXNABuildOutput" />
+    </MSBuild>
+  </Target>
+  <Target Name="HareTortoiseGameXNA:Publish">
+    <MSBuild Condition="'%(ProjectReference.Identity)' == 'C:\Users\Maplewing\Documents\Visual Studio 2010\Projects\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA\HareTortoiseGameXNA.csproj'" Projects="@(ProjectReference)" Targets="Publish" BuildInParallel="True" ToolsVersion="$(ProjectToolsVersion)" Properties="Configuration=Release; Platform=x86;BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)" />
+  </Target>
+</Project>
