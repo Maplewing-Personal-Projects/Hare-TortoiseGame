@@ -1,4 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿// 人工智慧作業三 龜兔賽跑程式之研發                
+// 資工系103級 499470098 曹又霖
+// 使用方法：                                       
+// 使用Visual Studio 2012並灌入MonoGame後即可打開並編譯。
+// 執行方法：
+// 需先灌入.NET Framework 4 和 OpenAL 後，即可打開。
+// 信箱：sinmaplewing@gmail.com
+
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
@@ -11,13 +20,15 @@ namespace HareTortoiseGame
     /// </summary>
     public class MainGame : Game
     {
-        GraphicsDeviceManager _graphics;
+        public GraphicsDeviceManager Graphics;
         SpriteBatch _spriteBatch;
         SceneManager _sceneManager;
+        Texture2D _logo;
 
         public MainGame()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            IsMouseVisible = true;
+            Graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
@@ -29,10 +40,16 @@ namespace HareTortoiseGame
         /// </summary>
         protected override void Initialize()
         {
+            MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
+            SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
+            MediaPlayer.IsRepeating = true;
             // TODO: Add your initialization logic here
-            _sceneManager = new SceneManager(this, "Setting");
+            _sceneManager = new SceneManager(this, "OP");
             _sceneManager.Start();
+
+            GameState.Initialize();
             base.Initialize();
+            _logo = Content.Load<Texture2D>("logo");
         }
 
         /// <summary>
@@ -63,11 +80,20 @@ namespace HareTortoiseGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // TODO: Add your update logic here
-            _sceneManager.PreviousBounds = _graphics.GraphicsDevice.Viewport;
+            if (GameState._windowState != WindowState.Snap1Quarter)
+            {
+                MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
+                SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
+                // TODO: Add your update logic here
+                _sceneManager.PreviousBounds = Graphics.GraphicsDevice.Viewport;
 
-            TouchControl.Update(gameTime);
-            base.Update(gameTime);
+                TouchControl.Update(gameTime);
+                base.Update(gameTime);
+            }
+            else
+            {
+                MediaPlayer.Volume = 0.0f;
+            }
         }
 
         /// <summary>
@@ -76,11 +102,20 @@ namespace HareTortoiseGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Gray);
 
             // TODO: Add your drawing code here
-
-            base.Draw(gameTime);
+            if (GameState._windowState != WindowState.Snap1Quarter)
+            {
+                base.Draw(gameTime);
+            }
+            else
+            {
+                _spriteBatch.Begin();
+                _spriteBatch.Draw(_logo, new Rectangle((int)(GameState._windowsBounds.Width) / 2, (int)(GameState._windowsBounds.Height) / 2, 200, 100), null, Color.White, 1.0f,
+                    new Vector2(_logo.Width / 2, _logo.Height / 2), SpriteEffects.None, 1.0f);
+                _spriteBatch.End();
+            }
         }
     }
 }

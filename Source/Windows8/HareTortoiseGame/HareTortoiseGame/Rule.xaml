@@ -1,0 +1,49 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HareTortoiseGameXaml"
+    xmlns:htg="using:HareTortoiseGame"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converters="using:Callisto.Converters"
+    x:Class="HareTortoiseGameXaml.Rule"
+    mc:Ignorable="d"
+    d:DesignHeight="768"
+    d:DesignWidth="346">
+
+    <UserControl.Resources>
+        <Converters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25" FontWeight="Bold">
+        遊玩目標
+        </TextBlock>
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25">
+        想盡辦法將自身的三顆棋移至對面並且離開棋盤，烏龜得往上面離開，兔子得往右邊離開。
+        </TextBlock>
+        <TextBlock Grid.Row="2" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25" FontWeight="Bold">
+        遊玩規則
+        </TextBlock>
+        <TextBlock Grid.Row="3" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25">
+        烏龜只能往上、左、右三個方向行走，兔子只能往右、上、下三個方向行走。當一方完全不能移動時，就直接跳過換成另外一方移動。
+        </TextBlock>
+        <TextBlock Grid.Row="4" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25" FontWeight="Bold">
+        製作
+        </TextBlock>
+        <TextBlock Grid.Row="5" TextWrapping="Wrap" Padding="10" FontSize="15" LineHeight="25">
+        灆洢騎士：程式、音樂、UI設計 |
+        圖像源自於：Metro Studio 2 | 
+        音效源自於：http://opengameart.org/content/gui-sound-effects (By Lokif) | 
+        原為師大林順喜教授人工智慧課作業三
+        </TextBlock>
+    </Grid>
+</UserControl>

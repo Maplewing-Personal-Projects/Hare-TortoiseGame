@@ -1,5 +1,7 @@
 ﻿using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI;
+using Windows.UI.ApplicationSettings;
 using Windows.UI.Xaml;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -38,6 +40,8 @@ namespace HareTortoiseGame
                 // Create a main GamePage
                 gamePage = new GamePage(args.Arguments);
 
+                SettingsPane.GetForCurrentView().CommandsRequested += App_CommandsRequested;
+
                 if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     // TODO: Load state from previously suspended application
@@ -49,6 +53,44 @@ namespace HareTortoiseGame
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        void App_CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
+        {
+            Color backgroundcolor = Color.FromArgb(255, 0, 77, 96);
+            var setting = new SettingsCommand("setting", "遊玩設定", (handler) =>
+                {
+                    var settings = new Callisto.Controls.SettingsFlyout();
+                    settings.Content = new HareTortoiseGameXaml.Setting();
+                    settings.HeaderText = "遊玩設定";
+                    settings.IsOpen = true;
+                    settings.ContentForegroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.White);
+                    settings.HeaderBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+                    settings.ContentBackgroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+                });
+            var privateRule = new SettingsCommand("private", "隱私權條款", (handler) =>
+                {
+                    var settings = new Callisto.Controls.SettingsFlyout();
+                    settings.Content = new HareTortoiseGameXaml.PrivateRule();
+                    settings.HeaderText = "隱私權條款";
+                    settings.IsOpen = true;
+                    settings.ContentForegroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.White);
+                    settings.HeaderBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+                    settings.ContentBackgroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+                });
+            var rule = new SettingsCommand("rule", "遊戲說明", (handler) =>
+            {
+                var settings = new Callisto.Controls.SettingsFlyout();
+                settings.Content = new HareTortoiseGameXaml.Rule();
+                settings.HeaderText = "遊戲說明";
+                settings.IsOpen = true;
+                settings.ContentForegroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(Colors.White);
+                settings.HeaderBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+                settings.ContentBackgroundBrush = new Windows.UI.Xaml.Media.SolidColorBrush(backgroundcolor);
+            });
+            args.Request.ApplicationCommands.Add(rule);
+            args.Request.ApplicationCommands.Add(setting);
+            args.Request.ApplicationCommands.Add(privateRule);
         }
 
         /// <summary>
