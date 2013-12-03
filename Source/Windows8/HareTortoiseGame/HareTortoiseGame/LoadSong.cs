@@ -19,7 +19,7 @@ namespace HareTortoiseGame
 {
     public static class LoadSong
     {
-        public static string[] Songlist = { "25", "EmeraldHillClassic", "SunsetParkModern" };
+        public static string[] Songlist = { /*"25", "EmeraldHillClassic", "SunsetParkModern"*/};
 
         /*
         public static void SongInitialize()

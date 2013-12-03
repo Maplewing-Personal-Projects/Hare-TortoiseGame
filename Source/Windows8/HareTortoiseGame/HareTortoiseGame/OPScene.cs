@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Audio;
 using System.Threading.Tasks;
 using HareTortoiseGame.State;
 using HareTortoiseGame.Component;
+using Windows;
 
 namespace HareTortoiseGame.PackageScene
 {
@@ -43,6 +44,42 @@ namespace HareTortoiseGame.PackageScene
             _loadMusic = new Task(() => SettingParameters.LoadMusic(Game) );
             _loadMusic.Start();
             _state.AddState(0.5f, new DrawState(Game, new Vector4(0, 0, 1, 1), Color.Gray));
+            
+            Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
+            if (roamingSettings.Values.ContainsKey("maxPly"))
+            {
+                SettingParameters.MaxPly = (int)roamingSettings.Values["maxPly"];
+            }
+            if (roamingSettings.Values.ContainsKey("players0"))
+            {
+                SettingParameters.Players[0] = (Board.Player)roamingSettings.Values["players0"];
+            }
+            if (roamingSettings.Values.ContainsKey("players1"))
+            {
+                SettingParameters.Players[1] = (Board.Player)roamingSettings.Values["players1"];
+            }
+            if (roamingSettings.Values.ContainsKey("maxEdgeCount"))
+            {
+                SettingParameters.MaxEdgeCount = (int)roamingSettings.Values["maxEdgeCount"];
+            }
+            if (roamingSettings.Values.ContainsKey("soundVolume"))
+            {
+                SettingParameters.SoundVolume = (int)roamingSettings.Values["soundVolume"];
+            }
+            if (roamingSettings.Values.ContainsKey("musicVolume"))
+            {
+                SettingParameters.MusicVolume = (int)roamingSettings.Values["musicVolume"];
+            }
+            if (roamingSettings.Values.ContainsKey("hareScore"))
+            {
+                SettingParameters.HareScore = (int)roamingSettings.Values["hareScore"];
+            }
+            if (roamingSettings.Values.ContainsKey("tortoiseScore"))
+            {
+                SettingParameters.TortoiseScore = (int)roamingSettings.Values["tortoiseScore"];
+            }
+            SettingParameters.update = true;
+            SettingParameters.UpdateTile();
             base.Initialize();
         }
 

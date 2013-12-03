@@ -161,6 +161,7 @@
     <Compile Include="GraphComponent.cs" />
     <Compile Include="LoadSong.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="Media.cs" />
     <Compile Include="OPScene.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RealSettingParameters.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Rule.xaml.cs">
       <DependentUpon>Rule.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EdgeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -189,6 +191,7 @@
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\WideLogo.scale-100.png" />
     <Content Include="Common\ReadMe.txt" />
     <Content Include="Content\Font.xnb" />
     <Content Include="Content\misc_menu_4.xnb" />
@@ -197,18 +200,20 @@
     <Content Include="Content\25.xnb" />
     <Content Include="Content\EmeraldHillClassic.xnb" />
     <Content Include="Content\SunsetParkModern.xnb" />
+    <Content Include="Content\startMenu.xnb" />
+    <Content Include="Content\bg.xnb" />
+    <Content Include="Content\transparent.xnb" />
+    <Content Include="Content\leftside.xnb" />
     <None Include="HareTortoiseGame_StoreKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="HareTortoiseGame_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\25.mp3" />
     <Content Include="Content\Add.png" />
     <Content Include="Content\blank.png" />
     <Content Include="Content\Check.png" />
     <Content Include="Content\Computer.png" />
-    <Content Include="Content\EmeraldHillClassic.mp3" />
     <Content Include="Content\logo.png" />
     <Content Include="Content\Minus.png" />
     <Content Include="Content\Next.png" />
@@ -216,7 +221,6 @@
     <Content Include="Content\Rabbit.png" />
     <Content Include="Content\RabbitWin.png" />
     <Content Include="Content\rightarrow.png" />
-    <Content Include="Content\SunsetParkModern.mp3" />
     <Content Include="Content\Turtle.png" />
     <Content Include="Content\TurtleWin.png" />
     <Content Include="Content\User.png" />
@@ -247,7 +251,12 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="NotificationsExtensions\NotificationsExtensions.csproj">
+      <Project>{6e87464b-b064-40ca-8161-7c18c337adff}</Project>
+      <Name>NotificationsExtensions</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

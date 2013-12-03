@@ -34,10 +34,14 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _next;
         GraphComponent _back;
 
-        Song _backgroundSong;
-        SoundEffect _click;
-        SoundEffect _clickError;
-        SoundEffect _start;
+        SoundEffect _backgroundSong;
+
+        SoundEffect _click_;
+        SoundEffectInstance _click;
+        SoundEffect _clickError_;
+        SoundEffectInstance _clickError;
+        SoundEffect _start_;
+        SoundEffectInstance _start;
 
         Board.Player[] _previousPlayers;
 
@@ -59,10 +63,8 @@ namespace HareTortoiseGame.PackageScene
                 game.Content.Load<Texture2D>("blank"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
-            _backgroundSong = LoadSong.Load(game,"EmeraldHillClassic");
-            if (MediaPlayer.Queue.ActiveSong != _backgroundSong ||
-                MediaPlayer.State == MediaState.Stopped)
-                MediaPlayer.Play(_backgroundSong);
+            _backgroundSong = game.Content.Load<SoundEffect>("EmeraldHillClassic");
+            Media.Play(_backgroundSong);
 
             _plyAddHover = false;
             _plyMinusHover = false;
@@ -71,9 +73,12 @@ namespace HareTortoiseGame.PackageScene
             _hareUserHover = false;
             _hareComputerHover = false;
 
-            _click = game.Content.Load<SoundEffect>("misc_menu_4");
-            _clickError = game.Content.Load<SoundEffect>("negative_2");
-            _start = game.Content.Load<SoundEffect>("save");
+            _click_ = game.Content.Load<SoundEffect>("misc_menu_4");
+            _click = _click_.CreateInstance();
+            _clickError_ = game.Content.Load<SoundEffect>("negative_2");
+            _clickError = _clickError_.CreateInstance();
+            _start_ = game.Content.Load<SoundEffect>("save");
+            _start = _start_.CreateInstance();
 
             _settingView = new FontComponent( game, game.Content.Load<SpriteFont>( "font" ),
                 new DrawState(game, new Vector4( 0.05f, 0.05f, 0.0f, 0.0f), Color.White));
@@ -139,7 +144,11 @@ namespace HareTortoiseGame.PackageScene
 
         public override void Update(GameTime gameTime)
         {
+            _click.Volume = ((float)SettingParameters.SoundVolume) / 100f;
+            _clickError.Volume = ((float)SettingParameters.SoundVolume) / 100f;
+            _start.Volume = ((float)SettingParameters.SoundVolume) / 100f;
 
+            Media.Play(_backgroundSong);
             if (_previousPlayers == null)
             {
                 _previousPlayers = new Board.Player[2];

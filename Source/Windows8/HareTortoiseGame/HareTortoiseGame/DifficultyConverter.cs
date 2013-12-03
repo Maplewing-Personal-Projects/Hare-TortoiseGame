@@ -23,6 +23,10 @@ namespace HareTortoiseGame
             {
                 return 2;
             }
+            else if ((int)value == 0)
+            {
+                return 3;
+            }
             else return -1;
         }
 
@@ -39,6 +43,10 @@ namespace HareTortoiseGame
             else if ((int)value == 2)
             {
                 return 16;
+            }
+            else if ((int)value == 3)
+            {
+                return 0;
             }
             else return 12;
         }

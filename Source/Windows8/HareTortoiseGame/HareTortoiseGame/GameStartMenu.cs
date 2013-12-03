@@ -24,8 +24,10 @@ namespace HareTortoiseGame.PackageScene
     {
         #region Field
 
-        Song _backgroundSong;
-        SoundEffect _click;
+        SoundEffect _backgroundSong;
+
+        SoundEffect _click_;
+        SoundEffectInstance _click;
 
         GraphComponent _logo;
         FontComponent _startGame;
@@ -40,19 +42,18 @@ namespace HareTortoiseGame.PackageScene
 
         public GameStartMenu(Game game)
             : base(game,
-                game.Content.Load<Texture2D>("blank"),
+                game.Content.Load<Texture2D>("startMenu"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
             _startHover = false;
             _settingHover = false;
             _exitHover = false;
 
-            _backgroundSong = game.Content.Load<Song>("EmeraldHillClassic");
-            if (MediaPlayer.Queue.ActiveSong != _backgroundSong || 
-                MediaPlayer.State == MediaState.Stopped) 
-                MediaPlayer.Play(_backgroundSong);
+            _backgroundSong = game.Content.Load<SoundEffect>("EmeraldHillClassic");
+            Media.Play(_backgroundSong);
 
-            _click = game.Content.Load<SoundEffect>("misc_menu_4");
+            _click_ = game.Content.Load<SoundEffect>("misc_menu_4");
+            _click = _click_.CreateInstance();
 
             _logo = new GraphComponent( game, game.Content.Load<Texture2D>("logo"),
                 new DrawState(game, new Vector4(0.2f, 0.3f, 0.6f, 0.4f), Color.White));
@@ -104,6 +105,7 @@ namespace HareTortoiseGame.PackageScene
 
         public override void Update(GameTime gameTime)
         {
+            Media.Play(_backgroundSong);
             if (_startGame.IsHover() && !_startHover)
             {
                 _startGame.ClearAllAndAddState(0.2f, new DrawState(Game,
@@ -146,12 +148,14 @@ namespace HareTortoiseGame.PackageScene
 
             if (_startGame.IsHit())
             {
+                _click.Volume = ((float)SettingParameters.SoundVolume) / 100f;
                 _click.Play();
                 MediaPlayer.Stop();
                 NextScene = "Board";
             }
             if (_settingGame.IsHit())
             {
+                _click.Volume = ((float)SettingParameters.SoundVolume) / 100f;
                 _click.Play();
                 SettingsPane.Show();
             }

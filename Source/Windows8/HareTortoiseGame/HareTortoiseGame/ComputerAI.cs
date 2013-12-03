@@ -27,6 +27,8 @@ namespace HareTortoiseGame.GameLogic
         int _bestPosition = -1;
         Chess.Action _bestAction = Chess.Action.None;
 
+        static bool _noRoad = false;
+
         const int WinValue = 1000;
         const int MinValue = -9999999;
         const int MaxValue = 9999999;
@@ -55,9 +57,194 @@ namespace HareTortoiseGame.GameLogic
 
         public Tuple<int, Chess.Action> BestMove()
         {
+            int result;
+
             _top = true;
-            int result = AlphaBeta(_nowTurn, MinValue, MaxValue);
+            if (_ply == 0) result = Random(_nowTurn);
+            else result = AlphaBeta(_nowTurn, MinValue, MaxValue);
             return new Tuple<int, Chess.Action>(_bestPosition, _bestAction);
+        }
+
+        private int Random(Board.Turn turn)
+        {
+            ulong goalMove = 0, leftMove = 0, rightMove = 0, upMove = 0, downMove = 0;
+            GetAllMove(turn, ref goalMove, ref leftMove, ref rightMove, ref upMove, ref downMove);
+            if (CheckNoMove(goalMove, leftMove, rightMove, upMove, downMove)) return 0;
+            Random rand = new Random();
+            if (turn == Board.Turn.HareTurn)
+            {
+                while (true)
+                {
+                    int value = rand.Next(0, 1000);
+                    if (value < 400)
+                    {
+                        int total = CountBit(rightMove);
+                        if (total <= 0)
+                        {
+                            _noRoad = false;
+                            continue;
+                        }
+                        int moveSelect = value % total;
+                        
+                        ulong move = GetOneMove(rightMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(rightMove, move);
+                            move = GetOneMove(rightMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Right, move));
+                        _bestAction = Chess.Action.Right;
+                        return 0;
+                    }
+                    else if (value < 800)
+                    {
+                        int total = CountBit(goalMove);
+                        if (total <= 0)
+                        {
+                            _noRoad = false;
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(goalMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(goalMove, move);
+                            move = GetOneMove(goalMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Goal, move));
+                        _bestAction = Chess.Action.Right;
+                        return 0;
+                    }
+                    else if (value < 900 && !_noRoad)
+                    {
+                        int total = CountBit(upMove);
+                        if (total <= 0)
+                        {
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(upMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(upMove, move);
+                            move = GetOneMove(upMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Up, move));
+                        _bestAction = Chess.Action.Up;
+                        _noRoad = true;
+                        return 0;
+                    }
+                    else if (value <= 1000 && !_noRoad)
+                    {
+                        int total = CountBit(downMove);
+                        if (total <= 0)
+                        {
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(downMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(downMove, move);
+                            move = GetOneMove(downMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Down, move));
+                        _bestAction = Chess.Action.Down;
+                        _noRoad = true;
+                        return 0;
+                    }
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    int value = rand.Next(0, 1000);
+                    if (value < 400)
+                    {
+                        int total = CountBit(upMove);
+                        if (total <= 0)
+                        {
+                            _noRoad = false;
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(upMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(upMove, move);
+                            move = GetOneMove(upMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Up, move));
+                        _bestAction = Chess.Action.Up;
+                        return 0;
+                    }
+                    else if (value < 800)
+                    {
+                        int total = CountBit(goalMove);
+                        if (total <= 0)
+                        {
+                            _noRoad = false;
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(goalMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(goalMove, move);
+                            move = GetOneMove(goalMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Goal, move));
+                        _bestAction = Chess.Action.Up;
+                        return 0;
+                    }
+                    else if (value < 900 && !_noRoad)
+                    {
+                        int total = CountBit(leftMove);
+                        if (total <= 0)
+                        {
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(leftMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(leftMove, move);
+                            move = GetOneMove(leftMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Left, move));
+                        _bestAction = Chess.Action.Left;
+                        _noRoad = true;
+                        return 0;
+                    }
+                    else if (value <= 1000 && !_noRoad)
+                    {
+                        int total = CountBit(rightMove);
+                        if (total <= 0)
+                        {
+                            continue;
+                        }
+                        int moveSelect = value % total;
+
+                        ulong move = GetOneMove(rightMove);
+                        for (int i = 0; i < moveSelect; ++i)
+                        {
+                            rightMove = DeleteAMove(rightMove, move);
+                            move = GetOneMove(rightMove);
+                        }
+                        _bestPosition = BoardData.GetOneChessPosition(GetOriginalMove(Chess.Action.Right, move));
+                        _bestAction = Chess.Action.Right;
+                        _noRoad = true;
+                        return 0;
+                    }
+                }
+            }
         }
 
         private int AlphaBeta(Board.Turn turn, int alpha, int beta)

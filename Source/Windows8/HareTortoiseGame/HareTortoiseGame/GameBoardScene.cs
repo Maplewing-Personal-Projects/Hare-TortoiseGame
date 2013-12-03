@@ -29,16 +29,20 @@ namespace HareTortoiseGame.PackageScene
         GraphComponent _rightArrow;
         GraphComponent _back;
 
+        bool _isComputed;
         bool _backHover;
+        bool _isVictory = false;
 
         GraphComponent _hareWin;
         GraphComponent _tortoiseWin;
 
-        Song _backgroundSong;
-        Song _victory;
+        SoundEffect _backgroundSong;
+        SoundEffect _victory;
 
-        SoundEffect _start;
-        SoundEffect _clickError;
+        SoundEffect _start_;
+        SoundEffectInstance _start;
+        SoundEffect _clickError_;
+        SoundEffectInstance _clickError;
 
         Board.Turn _turn;
         bool _nomove;
@@ -48,19 +52,21 @@ namespace HareTortoiseGame.PackageScene
 
         public GameBoardScene(Game game)
             : base(game,
-                game.Content.Load<Texture2D>("blank"),
+                game.Content.Load<Texture2D>("bg"),
                 new DrawState(game, new Vector4(2f, 0f, 1f, 1f), Color.Gray))
         {
-            _backgroundSong = LoadSong.Load(game,"SunsetParkModern");
-            _victory = LoadSong.Load(game,"25");
+            _backgroundSong = game.Content.Load<SoundEffect>("SunsetParkModern");
+            _victory = game.Content.Load<SoundEffect>("25");
 
             _backHover = false;
 
-            _start = game.Content.Load<SoundEffect>("save");
-            _clickError = game.Content.Load<SoundEffect>("negative_2");
+            _start_ = game.Content.Load<SoundEffect>("save");
+            _start = _start_.CreateInstance();
+            _clickError_ = game.Content.Load<SoundEffect>("negative_2");
+            _clickError = _clickError_.CreateInstance();
 
-            _board = new Board(game, game.Content.Load<Texture2D>("blank"),
-                new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
+            _board = new Board(game, game.Content.Load<Texture2D>("transparent"),
+                new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.White));
             _board.AddState(0.5f, new DrawState(game, new Vector4(0.65f, 0.5f, 0f, 0f), Color.Gray));
             _board.AddState(0.5f, new DrawState(game, new Vector4(0.35f, 0.1f, 0.6f, 0.8f), Color.Gray));
 
@@ -110,6 +116,8 @@ namespace HareTortoiseGame.PackageScene
             _panel.AddComponent(_rightArrow);
             _panel.AddComponent(_back);
             AddComponent(_panel);
+
+            _isComputed = false;
         }
 
         #endregion
@@ -124,13 +132,18 @@ namespace HareTortoiseGame.PackageScene
 
         public override void Update(GameTime gameTime)
         {
+            _start.Volume = ((float)SettingParameters.SoundVolume) / 100f;
+            _clickError.Volume = ((float)SettingParameters.SoundVolume) / 100f;
+
+            /*
             if (_board.IsFinish())
             {
-                if (MediaPlayer.State == MediaState.Stopped)
-                {
-                    MediaPlayer.Play(_backgroundSong);
-                }
+                Media.Play(_backgroundSong);
             }
+            */
+
+            if (!_isVictory) Media.Play(_backgroundSong);
+            
 
             if (_back.IsHit())
             {
@@ -179,23 +192,29 @@ namespace HareTortoiseGame.PackageScene
             }
             if (_board.TortoiseVictory())
             {
-                if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == _backgroundSong)
-                {
-                    MediaPlayer.Stop();
-                    MediaPlayer.Play(_victory);
-                }
+                Media.Play(_victory);
+                _isVictory = true;
                 _alertMessage.Content = "烏龜獲勝！";
+                if (!_isComputed)
+                {
+                    ++SettingParameters.TortoiseScore;
+                    SettingParameters.UpdateTile();
+                    _isComputed = true;
+                }
                 _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
                 _tortoiseWin.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0f, 0f, 1f, 1f), Color.PowderBlue));
             }
             else if (_board.HareVictory())
             {
-                if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == _backgroundSong)
-                {
-                    MediaPlayer.Stop();
-                    MediaPlayer.Play(_victory);
-                }
+                Media.Play(_victory);
+                _isVictory = true;
                 _alertMessage.Content = "兔子獲勝！";
+                if (!_isComputed)
+                {
+                    ++SettingParameters.HareScore;
+                    SettingParameters.UpdateTile();
+                    _isComputed = true;
+                }
                 _alertMessage.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0.1f, 0.25f, 0.8f, 0.0f), Color.Red));
                 _hareWin.ClearAllAndAddState(0.2f, new DrawState(Game, new Vector4(0f, 0f, 1f, 1f), Color.PowderBlue));
             }

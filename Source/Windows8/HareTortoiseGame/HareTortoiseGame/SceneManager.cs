@@ -42,12 +42,14 @@ namespace HareTortoiseGame.Manager
                     scene = new OPScene(Game);
                     break;
                 case "GameStart":
+                    SettingParameters.GameWait = true;
                     scene = new GameStartMenu(Game);
                     break;
                 case "DisplaySetting":
                     scene = new DisplaySoundSetting(Game);
                     break;
                 case "Board":
+                    SettingParameters.GameWait = false;
                     scene = new GameBoardScene(Game);
                     break;
                 case "Setting":

@@ -15,10 +15,12 @@
         <Converters:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
         <htg:DifficultyConverter x:Key="difficultyConverter" />
         <htg:UserAIConverter x:Key="userAIConverter" />
+        <htg:EdgeConverter x:Key="edgeConverter" />
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -37,7 +39,7 @@
 
             <Slider Grid.Column="1" Value="{Binding MusicVolume, Mode=TwoWay}" />
         </Grid>
-
+        
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
@@ -45,7 +47,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" FontSize="15" 
 				HorizontalAlignment="Center" Margin="10">
-				<Run Text="音效音量："/>
+				<Run Text="音量："/>
             </TextBlock>
 
             <Slider Grid.Column="1" Value="{Binding SoundVolume, Mode=TwoWay}" />
@@ -61,10 +63,15 @@
 				<Run Text="電腦難度："/>
             </TextBlock>
 
-            <ComboBox Grid.Column="1" SelectedIndex="{Binding MaxPly, Converter={StaticResource difficultyConverter}, Mode=TwoWay}">
+            <ComboBox Grid.Column="1" 
+                      SelectedIndex="{Binding MaxPly, 
+                                      Converter={StaticResource difficultyConverter}, 
+                                      Mode=TwoWay}"
+                      IsEnabled="{Binding GameWait, Mode=TwoWay}">
                 <x:String>簡單</x:String>
                 <x:String>中等</x:String>
                 <x:String>困難</x:String>
+                <x:String>隨機</x:String>
             </ComboBox>
         </Grid>
 
@@ -78,7 +85,11 @@
 				<Run Text="烏龜操作："/>
             </TextBlock>
 
-            <ComboBox Grid.Column="1" SelectedIndex="{Binding Players[0], Converter={StaticResource userAIConverter}, Mode=TwoWay}">
+            <ComboBox Grid.Column="1" 
+                      SelectedIndex="{Binding Players[0], 
+                                      Converter={StaticResource userAIConverter}, 
+                                      Mode=TwoWay}"
+                      IsEnabled="{Binding GameWait, Mode=TwoWay}">
                 <x:String>電腦</x:String>
                 <x:String>玩家</x:String>
             </ComboBox>
@@ -94,9 +105,32 @@
 				<Run Text="兔子操作："/>
             </TextBlock>
 
-            <ComboBox Grid.Column="1" SelectedIndex="{Binding Players[1], Converter={StaticResource userAIConverter}, Mode=TwoWay}">
+            <ComboBox Grid.Column="1" 
+                      SelectedIndex="{Binding Players[1], 
+                                     Converter={StaticResource userAIConverter}, 
+                                     Mode=TwoWay}"
+                      IsEnabled="{Binding GameWait, Mode=TwoWay}">
                 <x:String>電腦</x:String>
                 <x:String>玩家</x:String>
+            </ComboBox>
+        </Grid>
+        <Grid Grid.Row="5" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" FontSize="15" 
+				HorizontalAlignment="Center" Margin="10">
+				<Run Text="棋盤大小："/>
+            </TextBlock>
+
+            <ComboBox Grid.Column="1" 
+                      SelectedIndex="{Binding MaxEdgeCount, 
+                                     Converter={StaticResource edgeConverter}, 
+                                     Mode=TwoWay}"
+                      IsEnabled="{Binding GameWait, Mode=TwoWay}">
+                <x:String>小型</x:String>
+                <x:String>大型</x:String>
             </ComboBox>
         </Grid>
     </Grid>

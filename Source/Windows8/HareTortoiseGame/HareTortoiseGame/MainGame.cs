@@ -40,14 +40,15 @@ namespace HareTortoiseGame
         /// </summary>
         protected override void Initialize()
         {
-            MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
-            SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
-            MediaPlayer.IsRepeating = true;
+            // MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
+            // SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
+            // MediaPlayer.IsRepeating = true;
             // TODO: Add your initialization logic here
             _sceneManager = new SceneManager(this, "OP");
             _sceneManager.Start();
 
             GameState.Initialize();
+
             base.Initialize();
             _logo = Content.Load<Texture2D>("logo");
         }
@@ -82,17 +83,21 @@ namespace HareTortoiseGame
         {
             if (GameState._windowState != WindowState.Snap1Quarter)
             {
-                MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
-                SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
+                // MediaPlayer.Volume = ((float)SettingParameters.MusicVolume) / 100f;
+                // SoundEffect.MasterVolume = ((float)SettingParameters.SoundVolume) / 100f;
                 // TODO: Add your update logic here
                 _sceneManager.PreviousBounds = Graphics.GraphicsDevice.Viewport;
+                if (SettingParameters.update)
+                {
+                    SettingParameters.Save();
+                }
 
                 TouchControl.Update(gameTime);
                 base.Update(gameTime);
             }
             else
             {
-                MediaPlayer.Volume = 0.0f;
+                // MediaPlayer.Volume = 0.0f;
             }
         }
 

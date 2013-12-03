@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="57365.58898103A575C" Publisher="CN=AA3B8CD4-B98C-4A13-A127-4C2096948ACE" Version="1.0.0.2" />
+  <Identity Name="57365.58898103A575C" Publisher="CN=AA3B8CD4-B98C-4A13-A127-4C2096948ACE" Version="1.0.0.5" />
   <Properties>
     <DisplayName>龜兔賽跑棋</DisplayName>
     <PublisherDisplayName>灆洢騎士</PublisherDisplayName>
@@ -15,8 +15,8 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="HareTortoiseGame.App">
-      <VisualElements DisplayName="龜兔賽跑棋" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="想盡辦法將自身的三顆棋移至對面並且離開棋盤，烏龜得往上面離開，兔子得往右邊離開。" ForegroundText="light" BackgroundColor="#464646">
-        <DefaultTile ShowName="allLogos" />
+      <VisualElements DisplayName="龜兔賽跑棋" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="想盡辦法將自身的三顆棋移至對面並且離開棋盤，烏龜得往上面離開，兔子得往右邊離開。" ForegroundText="light" BackgroundColor="#989898">
+        <DefaultTile ShowName="noLogos" WideLogo="Assets\WideLogo.png" />
         <SplashScreen Image="Assets\SplashScreen.png" />
         <InitialRotationPreference>
           <Rotation Preference="landscape" />

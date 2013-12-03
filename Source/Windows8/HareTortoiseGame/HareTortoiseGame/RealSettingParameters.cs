@@ -16,6 +16,7 @@ namespace HareTortoiseGame
         int _maxEdgeCount = 4;
         int _soundVolume = 100;
         int _musicVolume = 30;
+        bool _gameWait = true;
         #endregion
 
         public RealSettingParameters()
@@ -59,6 +60,12 @@ namespace HareTortoiseGame
             }
         }
         public int SoundVolume { get { return _soundVolume; } set { SetProperty(ref _soundVolume, value); } }
-        public int MusicVolume { get { return _musicVolume; } set { SetProperty(ref _musicVolume, value); } }
+        public int MusicVolume { get { return _musicVolume; } 
+            set { 
+                SetProperty(ref _musicVolume, value);
+                Media.SetVolume();
+            } 
+        }
+        public bool GameWait { get { return _gameWait; } set { SetProperty(ref _gameWait, value); } }
     }
 }

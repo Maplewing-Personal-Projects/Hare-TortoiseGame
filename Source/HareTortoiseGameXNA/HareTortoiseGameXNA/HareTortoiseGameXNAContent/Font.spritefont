@@ -54,6 +54,54 @@ with.
       <CharacterRegion>  
         <Start>&#32;</Start>  
         <End>&#126;</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>型</Start>
+        <End>型</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>小</Start>
+        <End>小</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>大</Start>
+        <End>大</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>盤</Start>
+        <End>盤</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>度</Start>
+        <End>度</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>機</Start>
+        <End>機</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>隨</Start>
+        <End>隨</End>
+      </CharacterRegion>
+      <CharacterRegion>  
+        <Start>困</Start>
+        <End>困</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>難</Start>
+        <End>難</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>等</Start>
+        <End>等</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>簡</Start>
+        <End>簡</End>
+      </CharacterRegion> 
+      <CharacterRegion>  
+        <Start>單</Start>
+        <End>單</End>
       </CharacterRegion> 
       <CharacterRegion>  
         <Start>狀</Start>

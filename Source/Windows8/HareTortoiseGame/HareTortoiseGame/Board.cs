@@ -38,8 +38,10 @@ namespace HareTortoiseGame.Component
         bool[] _chessbuttonHover;
         bool[] _goalbuttonHover;
 
-        SoundEffect _click;
-        SoundEffect _clickError;
+        SoundEffect _click_;
+        SoundEffectInstance _click;
+        SoundEffect _clickError_;
+        SoundEffectInstance _clickError;
         bool _errorSound;
         
         Task<Tuple<int, Chess.Action>> _computerAITask; 
@@ -81,8 +83,10 @@ namespace HareTortoiseGame.Component
         }
         private void InitAndLoadContent(Game game, BoardData boardData)
         {
-            _click = game.Content.Load<SoundEffect>("misc_menu_4");
-            _clickError = game.Content.Load<SoundEffect>("negative_2");
+            _click_ = game.Content.Load<SoundEffect>("misc_menu_4");
+            _click = _click_.CreateInstance();
+            _clickError_ = game.Content.Load<SoundEffect>("negative_2");
+            _clickError = _clickError_.CreateInstance();
 
             InitChessButton(game);
             InitGoalButton(game);
@@ -134,7 +138,7 @@ namespace HareTortoiseGame.Component
                     game, new Vector4(0.025f + (1.0f / SettingParameters.MaxEdgeCount) * (position % SettingParameters.MaxEdgeCount),
                         0.025f + (1.0f / SettingParameters.MaxEdgeCount) * (position / SettingParameters.MaxEdgeCount),
                         (1.0f / SettingParameters.MaxEdgeCount) - 0.02f, (1.0f / SettingParameters.MaxEdgeCount) - 0.01f),
-                    Color.White), position % SettingParameters.MaxEdgeCount, position / SettingParameters.MaxEdgeCount, chessType);
+                        Color.White), position % SettingParameters.MaxEdgeCount, position / SettingParameters.MaxEdgeCount, chessType);
                 AddComponent(chess[index]);
                 ++index;
             }
@@ -147,6 +151,8 @@ namespace HareTortoiseGame.Component
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            _click.Volume = ((float)SettingParameters.SoundVolume) / 100f;
+            _clickError.Volume = ((float)SettingParameters.SoundVolume) / 100f;
 
             if (NotUpdate()) return;
 
